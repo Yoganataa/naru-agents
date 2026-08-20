@@ -1,0 +1,41 @@
+{
+  "name": "@yoganataa/naru-agents",
+  "version": "1.0.0",
+  "description": "AI Team Lead orchestration system for opencode with 6 role-based sub-agents",
+  "type": "module",
+  "bin": {
+    "naru-agents": "./bin/naru-agents.js"
+  },
+  "engines": {
+    "bun": ">=1.0"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "agents/",
+    "knowledge/",
+    "install.sh"
+  ],
+  "scripts": {
+    "test": "node bin/naru-agents.js validate"
+  },
+  "keywords": [
+    "opencode",
+    "ai",
+    "agent",
+    "naru",
+    "orchestration",
+    "subagent",
+    "bun"
+  ],
+  "author": "yoganataa",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yoganataa/naru-agents.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yoganataa/naru-agents/issues"
+  },
+  "homepage": "https://github.com/yoganataa/naru-agents#readme"
+}
