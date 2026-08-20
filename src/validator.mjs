@@ -12,11 +12,12 @@ const ROOT_DIR = join(__dirname, '..');
 const AGENTS_DIR = join(ROOT_DIR, 'agents');
 
 /**
- * Validate YAML frontmatter
+ * Validate YAML frontmatter and structural agent contracts
  * @param {string} content - File content
+ * @param {string} filename - Name of agent file
  * @returns {{ valid: boolean, errors: string[] }}
  */
-function validateYAML(content) {
+function validateYAML(content, filename) {
   const errors = [];
 
   // Check for frontmatter
@@ -27,6 +28,7 @@ function validateYAML(content) {
   }
 
   const yaml = frontmatterMatch[1];
+  const body = content.slice(frontmatterMatch[0].length);
 
   // Check for required fields
   if (!yaml.includes('description:')) {
@@ -52,6 +54,42 @@ function validateYAML(content) {
     errors.push('webfetch/websearch must be a string action ("allow" | "ask" | "deny"), not an object/mapping');
   }
 
+  // Step validation (A.4): verify steps is a positive integer and SOP body contains structured workflow
+  const stepsMatch = yaml.match(/steps:\s*(\d+)/);
+  if (stepsMatch) {
+    const stepsVal = parseInt(stepsMatch[1], 10);
+    if (isNaN(stepsVal) || stepsVal <= 0) {
+      errors.push(`steps must be a positive integer, got: ${stepsMatch[1]}`);
+    }
+  }
+  if (!body.includes('Workflow') && !body.includes('Step 1') && !body.includes('Pipeline') && filename !== 'naru.md') {
+    errors.push('Subagent body must define structured SOP workflow steps');
+  }
+
+  // Deploy safety validation: deploy-agent bash wildcard must be "ask"
+  if (filename === 'deploy-agent.md') {
+    const bashWildcardMatch = yaml.match(/bash:\s*\r?\n(?:\s+.*\r?\n)*?\s+["*]+:\s*"([^"]+)"/);
+    if (bashWildcardMatch && bashWildcardMatch[1] !== 'ask') {
+      errors.push(`deploy-agent bash wildcard must be "ask" for safety, got: "${bashWildcardMatch[1]}"`);
+    }
+  }
+
+  // Code modification agents must have semantic / context tools
+  if (filename === 'developer-agent.md' || filename === 'hotfix-agent.md') {
+    const hasSemanticTool = yaml.includes('serena_') || yaml.includes('lean-ctx_') || yaml.includes('codegraph_');
+    if (!hasSemanticTool) {
+      errors.push(`${filename} modifies code but lacks semantic code MCP tools (serena / lean-ctx / codegraph)`);
+    }
+  }
+
+  // Technical claim agents must have explicit Knowledge Gap / Citation section (C.4)
+  if (filename === 'researcher-agent.md' || filename === 'dependency-agent.md' || filename === 'naru.md') {
+    const hasGroundingOrGap = body.includes('KNOWLEDGE_GAP') || body.includes('Citations') || body.includes('Sitasi') || body.includes('Sources') || body.includes('Grounding');
+    if (!hasGroundingOrGap) {
+      errors.push(`${filename} provides technical claims but lacks explicit Knowledge Gap or Citation specification`);
+    }
+  }
+
   return { valid: errors.length === 0, errors };
 }
 
@@ -63,7 +101,7 @@ function validateYAML(content) {
 async function validateAgentFile(filePath) {
   const file = filePath.split(/[\\/]/).pop();
   const content = await readFile(filePath, 'utf8');
-  const { valid, errors } = validateYAML(content);
+  const { valid, errors } = validateYAML(content, file);
 
   return { file, valid, errors };
 }

@@ -67,39 +67,49 @@ clone_repo() {
 }
 
 # Install agents
+# Install agents and configure MCPs
 install_agents() {
-  print_info "Installing agents to $INSTALL_DIR..."
+  print_info "Installing agents & knowledge stores to $INSTALL_DIR..."
 
   # Create directories
   mkdir -p "$INSTALL_DIR/agents"
   mkdir -p "$INSTALL_DIR/knowledge"
 
-  # Copy agent files
-  for file in "$TEMP_DIR/agents/"*.md; do
-    if [ -f "$file" ]; then
-      filename=$(basename "$file")
-      cp "$file" "$INSTALL_DIR/agents/"
-      print_success "Installed $filename"
-    fi
-  done
+  # Run Smart Setup via Node/Bun
+  if [ -n "$RUNNER" ]; then
+    print_info "Executing Naru Smart System Setup via $RUNNER..."
+    cd "$TEMP_DIR"
+    $RUNNER bin/naru-agents.js setup --auto
+  else
+    # Fallback direct copy
+    for file in "$TEMP_DIR/agents/"*.md; do
+      if [ -f "$file" ]; then
+        filename=$(basename "$file")
+        cp "$file" "$INSTALL_DIR/agents/"
+        print_success "Installed $filename"
+      fi
+    done
 
-  # Copy knowledge files
-  for file in "$TEMP_DIR/knowledge/"*.md; do
-    if [ -f "$file" ]; then
-      filename=$(basename "$file")
-      cp "$file" "$INSTALL_DIR/knowledge/"
-      print_success "Installed $filename"
-    fi
-  done
+    for file in "$TEMP_DIR/knowledge/"*.md; do
+      if [ -f "$file" ]; then
+        filename=$(basename "$file")
+        cp "$file" "$INSTALL_DIR/knowledge/"
+        print_success "Installed $filename"
+      fi
+    done
+  fi
 }
 
 # Main
 main() {
   echo ""
-  echo -e "${CYAN}╔═══════════════════════════════════════════════════════════════╗${NC}"
-  echo -e "${CYAN}║          @yoganataa/naru-agents installer                    ║${NC}"
-  echo -e "${CYAN}║          AI Team Lead orchestration for opencode             ║${NC}"
-  echo -e "${CYAN}╚═══════════════════════════════════════════════════════════════╝${NC}"
+  echo -e "${CYAN}  █▀▀█  █▀▀█  █▀▀█  █  █     █▀▀█  █▀▀█  █▀▀█  █▀▀█  ▀█▀  █▀▀▀${NC}"
+  echo -e "${CYAN}  █  █  █▄▄█  █▄▄▀  █  █     █▄▄█  █ ▄▄  █▀▀▀  █  █   █   ▀▀▀█${NC}"
+  echo -e "${CYAN}  █  █  █  █  █ ▀▄  █  █     █  █  █  █  █     █  █   █      █${NC}"
+  echo -e "${CYAN}  █  █  █  █  █  █  █▄▄█     █  █  █▄▄█  █▄▄▄  █  █   █   █▄▄█${NC}"
+  echo ""
+  echo -e "  \033[90mSystem  \033[0m \033[1mN.A.R.U. - Next-gen Autonomous Role-based Unified agents (v0.0.2)\033[0m"
+  echo -e "  \033[90mCommands\033[0m \033[33mnaru setup\033[0m | \033[36mnaru doctor\033[0m"
   echo ""
 
   check_deps
@@ -107,9 +117,10 @@ main() {
   install_agents
 
   echo ""
-  print_success "Installation complete!"
+  print_success "Naru-Agents Smart Installation complete!"
   echo ""
-  print_info "Restart opencode to use the agents."
+  print_info "Run 'naru-agents doctor' anytime to audit your MCP & agent health."
+  print_info "Restart opencode to start orchestrating with @naru."
   echo ""
 }
 

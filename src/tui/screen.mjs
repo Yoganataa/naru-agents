@@ -7,7 +7,7 @@ import { stdin, stdout } from 'node:process';
 // ANSI escape codes
 const ESC = '\x1b[';
 const ALT_SCREEN_ON = ESC + '?1049h';
-const ALT_SCREEN_OFF = ESC + '?1049h';
+const ALT_SCREEN_OFF = ESC + '?1049l';
 const CURSOR_HIDE = ESC + '?25l';
 const CURSOR_SHOW = ESC + '?25h';
 const CLEAR = ESC + '2J';

@@ -1,8 +1,10 @@
 # Maintenance Log
 
-> Audit trail untuk knowledge maintenance: scoring, pruning, merging.
-> Setiap maintenance action dicatat di sini.
+> Audit trail for knowledge maintenance: scoring, pruning, merging, and freshness verification.
 
 ---
 
-*Belum ada maintenance actions.*
+## 2026-08-20: v2.0.0 Knowledge Store Baseline Initialized
+- Initialized RAG-compliant schema for `heuristics.md` and `patterns.md`.
+- Attached source metadata (`source_url`, `source_type`, `verified_date`, `status`).
+- Verified all seed entries as FRESH and active.

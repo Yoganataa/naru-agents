@@ -35,12 +35,16 @@ export const Mode = {
  */
 export const AGENTS = [
   { file: 'naru.md', name: 'naru', description: 'AI Team Lead (Orchestrator)', default: true },
-  { file: 'pm-agent.md', name: 'pm-agent', description: 'Project Manager', default: true },
-  { file: 'researcher-agent.md', name: 'researcher-agent', description: 'Researcher', default: true },
-  { file: 'architect-agent.md', name: 'architect-agent', description: 'Architect', default: true },
-  { file: 'developer-agent.md', name: 'developer-agent', description: 'Developer', default: true },
-  { file: 'reviewer-agent.md', name: 'reviewer-agent', description: 'Reviewer', default: false },
-  { file: 'qa-agent.md', name: 'qa-agent', description: 'QA Agent', default: false },
+  { file: 'pm-agent.md', name: 'pm-agent', description: 'Product Manager', default: true },
+  { file: 'researcher-agent.md', name: 'researcher-agent', description: 'Evidence Researcher', default: true },
+  { file: 'dependency-agent.md', name: 'dependency-agent', description: 'Dependency Contract Validator', default: true },
+  { file: 'architect-agent.md', name: 'architect-agent', description: 'System Architect', default: true },
+  { file: 'developer-agent.md', name: 'developer-agent', description: 'Senior Developer', default: true },
+  { file: 'reviewer-agent.md', name: 'reviewer-agent', description: 'Security & Compliance Reviewer', default: true },
+  { file: 'qa-agent.md', name: 'qa-agent', description: 'Multimodal QA Engineer', default: true },
+  { file: 'docs-agent.md', name: 'docs-agent', description: 'Continuous Documentarian', default: true },
+  { file: 'deploy-agent.md', name: 'deploy-agent', description: 'DevOps & Release Engineer', default: true },
+  { file: 'hotfix-agent.md', name: 'hotfix-agent', description: 'Production Hotfix Specialist', default: true },
 ];
 
 /**

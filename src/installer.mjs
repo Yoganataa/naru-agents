@@ -5,6 +5,7 @@
 import { readdir, copyFile, mkdir, rm, stat, access } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { homedir } from 'node:os';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -15,10 +16,14 @@ const AGENT_FILES = [
   'naru.md',
   'pm-agent.md',
   'researcher-agent.md',
+  'dependency-agent.md',
   'architect-agent.md',
   'developer-agent.md',
   'reviewer-agent.md',
   'qa-agent.md',
+  'docs-agent.md',
+  'deploy-agent.md',
+  'hotfix-agent.md',
 ];
 
 // Knowledge files to install
@@ -34,8 +39,7 @@ const KNOWLEDGE_FILES = [
  * @returns {string}
  */
 function getGlobalDir() {
-  const home = process.env.HOME || process.env.USERPROFILE;
-  return join(home, '.config', 'opencode');
+  return join(homedir(), '.config', 'opencode');
 }
 
 /**

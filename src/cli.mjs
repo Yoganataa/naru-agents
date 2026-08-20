@@ -14,6 +14,8 @@ export function parseArgs(argv) {
     project: false,
     force: false,
     dryRun: false,
+    withMcp: true,
+    auto: false,
   };
 
   for (const arg of argv) {
@@ -23,6 +25,11 @@ export function parseArgs(argv) {
       case 'validate':
       case 'help':
       case 'tui':
+      case 'setup':
+      case 'doctor':
+      case 'rollback':
+      case 'update':
+      case 'upgrade':
         result.command = arg;
         break;
       case '--global':
@@ -40,6 +47,16 @@ export function parseArgs(argv) {
       case '--dry-run':
       case '-d':
         result.dryRun = true;
+        break;
+      case '--with-mcp':
+        result.withMcp = true;
+        break;
+      case '--no-mcp':
+        result.withMcp = false;
+        break;
+      case '--auto':
+      case '-y':
+        result.auto = true;
         break;
       case '--help':
       case '-h':
