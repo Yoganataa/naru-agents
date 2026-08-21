@@ -2,10 +2,11 @@
 // Handles installing and uninstalling agent files to opencode config directories
 // ──────────────────────────────────────────────────────────────────────────────
 
-import { readdir, copyFile, mkdir, rm, stat, access } from 'node:fs/promises';
+import { readdir, copyFile, writeFile, mkdir, rm, stat, access } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { homedir } from 'node:os';
+import { EMBEDDED_AGENTS, EMBEDDED_KNOWLEDGE } from './embedded-assets.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -65,17 +66,23 @@ async function fileExists(path) {
 }
 
 /**
- * Copy a file with optional overwrite
- * @param {string} src
+ * Write or copy asset file with optional overwrite
+ * @param {string} filename
+ * @param {string} embeddedContent
+ * @param {string} fallbackSrcPath
  * @param {string} dest
  * @param {boolean} force
  * @returns {Promise<{ copied: boolean, skipped: boolean }>}
  */
-async function copyFileWithCheck(src, dest, force) {
+async function writeAssetWithCheck(filename, embeddedContent, fallbackSrcPath, dest, force) {
   if (await fileExists(dest) && !force) {
     return { copied: false, skipped: true };
   }
-  await copyFile(src, dest);
+  if (embeddedContent) {
+    await writeFile(dest, embeddedContent, 'utf8');
+    return { copied: true, skipped: false };
+  }
+  await copyFile(fallbackSrcPath, dest);
   return { copied: true, skipped: false };
 }
 
@@ -97,14 +104,12 @@ export async function installAgents(targetDir, options = {}) {
     console.log('\nDry run - would install:\n');
     console.log('Agents:');
     for (const file of agents) {
-      const src = join(ROOT_DIR, 'agents', file);
       const dest = join(agentsDir, file);
       const exists = await fileExists(dest);
       console.log(`  ${exists && !force ? '∼' : '+'} ${file}`);
     }
     console.log('\nKnowledge:');
     for (const file of KNOWLEDGE_FILES) {
-      const src = join(ROOT_DIR, 'knowledge', file);
       const dest = join(knowledgeDir, file);
       const exists = await fileExists(dest);
       console.log(`  ${exists && !force ? '∼' : '+'} ${file}`);
@@ -121,18 +126,18 @@ export async function installAgents(targetDir, options = {}) {
 
   // Install agent files
   for (const file of agents) {
-    const src = join(ROOT_DIR, 'agents', file);
+    const fallbackSrc = join(ROOT_DIR, 'agents', file);
     const dest = join(agentsDir, file);
-    const result = await copyFileWithCheck(src, dest, force);
+    const result = await writeAssetWithCheck(file, EMBEDDED_AGENTS[file], fallbackSrc, dest, force);
     if (result.copied) installed++;
     if (result.skipped) skipped++;
   }
 
   // Install knowledge files
   for (const file of KNOWLEDGE_FILES) {
-    const src = join(ROOT_DIR, 'knowledge', file);
+    const fallbackSrc = join(ROOT_DIR, 'knowledge', file);
     const dest = join(knowledgeDir, file);
-    const result = await copyFileWithCheck(src, dest, force);
+    const result = await writeAssetWithCheck(file, EMBEDDED_KNOWLEDGE[file], fallbackSrc, dest, force);
     if (result.copied) installed++;
     if (result.skipped) skipped++;
   }
