@@ -47,6 +47,7 @@ switch (args.command) {
       withMcp: args.withMcp,
       force: args.force || args.auto,
       dryRun: args.dryRun,
+      model: args.model,
     });
     break;
 
@@ -66,6 +67,48 @@ switch (args.command) {
     } else {
       console.error('❌ Rollback failed or no backup snapshot available.');
     }
+    break;
+
+  case 'init':
+    const { printBanner: printInitBanner } = await import('../src/banner.mjs');
+    const { mkdir: mkdirAsync, writeFile: writeInitFile, access: accessInit } = await import('node:fs/promises');
+    const { join: joinPath } = await import('node:path');
+    
+    printInitBanner('init');
+    const projectOpencode = joinPath(process.cwd(), '.opencode');
+    const projectKnowledge = joinPath(projectOpencode, 'knowledge');
+    const projectSessions = joinPath(projectKnowledge, 'sessions');
+    
+    await mkdirAsync(projectSessions, { recursive: true });
+    
+    const projectLatest = joinPath(projectSessions, 'latest.json');
+    try {
+      await accessInit(projectLatest);
+    } catch {
+      await writeInitFile(projectLatest, JSON.stringify({
+        initialized: new Date().toISOString(),
+        last_session_id: null,
+        status: "INITIALIZED",
+        version: "0.0.2"
+      }, null, 2), 'utf8');
+    }
+    
+    console.log('✅ Repository Knowledge & Session Architecture Initialized in: ' + projectKnowledge);
+    console.log('   - Sessions Directory : .opencode/knowledge/sessions/');
+    console.log('   - Latest Pointer     : .opencode/knowledge/sessions/latest.json');
+    console.log('\n💡 Next Step: Open OpenCode and type "@naru init" or send "Naru init repo" to execute 5-MCP deep AST & graph scanning!\n');
+    break;
+
+  case 'models':
+  case 'model':
+    const { runModelManagerCLI } = await import('../src/model-manager.mjs');
+    await runModelManagerCLI();
+    break;
+
+  case 'new':
+  case 'create':
+    const { runProjectWizard } = await import('../src/project-wizard.mjs');
+    await runProjectWizard();
     break;
 
   case 'update':
@@ -98,7 +141,10 @@ async function showHelp() {
 
 Commands:
   (none)              Launch interactive TUI
+  new, create         Interactive Project Scaffolding Wizard (prompts Category, Stack, DB, Auth, MVP)
+  init                Initialize repository knowledge & timestamped session structure
   setup               Smart Setup: installs 11 agents, knowledge stores & auto-configures 5 MCPs
+  models              Manage AI models, check role compatibility & inspect OpenCode models
   doctor              Health check & diagnostic for runtimes, agents & MCPs
   update, upgrade     Auto-upgrade global package and re-sync OpenCode agents & MCPs
   install             Install agents to opencode config
@@ -117,6 +163,8 @@ Options:
   --dry-run           Preview changes without installing
 
 Examples:
+  naru init
+  naru models
   naru setup
   naru doctor
   naru update

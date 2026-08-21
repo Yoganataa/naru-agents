@@ -4,8 +4,10 @@ description: "Deploy Agent - handles platform-specific deployment configs and ex
 mode: subagent
 hidden: true
 model: opencode/hy3-free
+color: "#14b8a6"
+variant: low
 temperature: 0.1
-steps: 15
+steps: 10
 permission:
   read:
     "*": "allow"
@@ -43,6 +45,7 @@ permission:
     "git tag*": "allow"
   webfetch: "allow"
   websearch: "allow"
+  question: "allow"
   lean-ctx_*: "allow"
   context7_*: "allow"
   codebase-memory-mcp_*: "allow"
@@ -148,3 +151,17 @@ Save deployment report to:
 - Execute unconfirmed shell deployment commands without `ask` approval.
 - Hardcode or request actual secret credentials.
 - Deploy code that has not passed QA quality gates.
+
+
+---
+
+## Interactive Deployment Target Selection Protocol
+
+Before executing or writing platform deployment configurations:
+1. **Target Environment Disambiguation**: Deploy-Agent MUST invoke OpenCode's native **`question` tool** to confirm target deployment environment:
+   - **Question**: *"Select target deployment environment:"*
+   - **Options**:
+     - `"Preview / Staging Environment (Recommended for pre-release validation)"`
+     - `"Production Live Environment"`
+     - `"Dry-Run (Generate deployment scripts & runbook without live execution)"`
+2. Tailor all generated configurations (`Dockerfile`, `vercel.json`, `wrangler.toml`, GitHub Actions) specifically to the confirmed target environment.

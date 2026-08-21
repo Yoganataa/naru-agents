@@ -84,6 +84,7 @@ export async function detectPackageManagers() {
   return results;
 }
 
+
 /**
  * Discover dynamic locations for all 5 MCP servers
  * @returns {Promise<Record<string, { available: boolean, type: string, command?: string[], url?: string, source?: string }>>}
@@ -186,5 +187,41 @@ export async function discoverMCPServers() {
     }
   }
 
+  // 5. Discover roblox-studio (Built-in Native Roblox Studio MCP Server)
+  const { isLinux } = detectOS();
+  if (isLinux) {
+    results['roblox-studio'] = {
+      available: false,
+      type: 'local',
+      command: null,
+      source: 'Unavailable on Linux (Roblox Studio only supports Windows & macOS)',
+    };
+  } else {
+    const robloxDir = isWindows
+      ? join(localAppData, 'Roblox')
+      : join(home, 'Library', 'Application Support', 'Roblox');
+    const robloxMcpBat = isWindows
+      ? join(robloxDir, 'mcp.bat')
+      : join(robloxDir, 'mcp.sh');
+
+    if (await fileExists(robloxMcpBat)) {
+      results['roblox-studio'] = {
+        available: true,
+        type: 'local',
+        command: isWindows ? ['cmd.exe', '/c', normalizePath(robloxMcpBat)] : [normalizePath(robloxMcpBat)],
+        source: 'Built-in Roblox Studio MCP Server (Active)',
+      };
+    } else if (await fileExists(robloxDir)) {
+      results['roblox-studio'] = {
+        available: true,
+        type: 'local',
+        command: isWindows ? ['cmd.exe', '/c', normalizePath(robloxMcpBat)] : [normalizePath(robloxMcpBat)],
+        source: 'Roblox Installed (Ready: Toggle in Studio Assistant > Manage MCP Servers)',
+      };
+    }
+  }
+
   return results;
 }
+
+

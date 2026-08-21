@@ -2,7 +2,7 @@
 // Creates automated backups before modifications and supports 1-click restore
 // ──────────────────────────────────────────────────────────────────────────────
 
-import { readdir, mkdir, copyFile, rm, stat } from 'node:fs/promises';
+import { readdir, mkdir, copyFile, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fileExists } from './smart-discovery.mjs';
 

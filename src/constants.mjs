@@ -27,4 +27,16 @@ export const BANNER_PRESETS = {
     system: `${APP_NAME} — Auto-Update & Self-Upgrade Engine (v${VERSION})`,
     commands: 'naru doctor',
   },
+  init: {
+    system: `${APP_NAME} — Cold-Start Repository Indexing (5-MCP Unified) (v${VERSION})`,
+    commands: 'opencode | naru doctor',
+  },
+  models: {
+    system: `${APP_NAME} — Dynamic AI Model Manager & Role Optimizer (v${VERSION})`,
+    commands: 'naru models | naru setup | opencode models',
+  },
+  new: {
+    system: `${APP_NAME} — Interactive Project Scaffolding Wizard (v${VERSION})`,
+    commands: 'naru new | naru setup | naru doctor',
+  },
 };

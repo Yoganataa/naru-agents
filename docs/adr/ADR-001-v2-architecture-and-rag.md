@@ -1,4 +1,4 @@
-# ADR-001: Naru-Agents v2.0 Multi-Agent Architecture and Production RAG Grounding
+# ADR-001: N.A.R.U. (v0.0.2) Multi-Agent Architecture and Production RAG Grounding
 
 - **Status:** Accepted
 - **Date:** 2026-08-20
@@ -13,7 +13,7 @@
 
 ## Context
 
-In Naru-Agents v1, the multi-agent pipeline operated across 7 agents. While effective for simple prototypes, production usage revealed several failure modes:
+In prototype iterations, multi-agent pipelines revealed several failure modes:
 1. **Cascading Hallucinations & Goal Drift**: Downstream agents deviated from initial requirements over multiple iterations.
 2. **Infinite Loops in Quality Gates**: Gates could alternate failures without ever exhausting a global budget or escalating to human operators.
 3. **Dependency Behavioral Surprises**: Libraries recommended during research failed at runtime due to version incompatibilities or missing features in the specified release.
@@ -22,10 +22,10 @@ In Naru-Agents v1, the multi-agent pipeline operated across 7 agents. While effe
 
 ## Decision
 
-We have established **Naru-Agents v2.0**, introducing an 11-agent sequential assembly line with the following structural pillars:
+We have established **N.A.R.U. (v0.0.2)**, introducing an 11-agent sequential assembly line with the following structural pillars:
 
 ### 1. Sequential SOPs & Immutable Goal Baseline (MetaGPT Foundation)
-- The pipeline initiates with `pm-agent` generating both `prd.md` and an immutable `goal-baseline.md` with explicit `naru_version: "2.0.0"`.
+- The pipeline initiates with `pm-agent` generating both `prd.md` and an immutable `goal-baseline.md` with explicit `naru_version: "0.0.2"`.
 - Every gate validates against this baseline contract to ensure zero drift.
 
 ### 2. Dual-Layer Retry Budget (LangGraph Foundation)
@@ -40,7 +40,7 @@ We have established **Naru-Agents v2.0**, introducing an 11-agent sequential ass
 - `STATUS: REJECTED` requires minimal 2 verified alternatives.
 
 ### 4. Multi-Language No-Bypass Policy
-- Enforces strict prohibition against silencing exceptions, blank ignores, or unlinked test skips across TypeScript, Python, Go, Rust, and Java/Kotlin.
+- Enforces strict prohibition against silencing exceptions, blank ignores, or unlinked test skips across Go, Python, JavaScript, TypeScript, Rust, Dart, Kotlin, C, C++, C#, or Java.
 
 ### 5. Production RAG Grounding & Interactive Query Distinction (Haystack Foundation)
 - **Internal State Queries**: Answered instantly from local artifacts with zero RAG latency.

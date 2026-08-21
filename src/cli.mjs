@@ -16,9 +16,11 @@ export function parseArgs(argv) {
     dryRun: false,
     withMcp: true,
     auto: false,
+    model: undefined,
   };
 
-  for (const arg of argv) {
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i];
     switch (arg) {
       case 'install':
       case 'uninstall':
@@ -28,6 +30,11 @@ export function parseArgs(argv) {
       case 'setup':
       case 'doctor':
       case 'rollback':
+      case 'init':
+      case 'models':
+      case 'model':
+      case 'new':
+      case 'create':
       case 'update':
       case 'upgrade':
         result.command = arg;
@@ -57,6 +64,12 @@ export function parseArgs(argv) {
       case '--auto':
       case '-y':
         result.auto = true;
+        break;
+      case '--model':
+      case '-m':
+        if (i + 1 < argv.length && !argv[i + 1].startsWith('-')) {
+          result.model = argv[++i];
+        }
         break;
       case '--help':
       case '-h':

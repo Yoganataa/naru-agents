@@ -2,7 +2,7 @@
 // Handles installing and uninstalling agent files to opencode config directories
 // ──────────────────────────────────────────────────────────────────────────────
 
-import { readdir, copyFile, writeFile, mkdir, rm, stat, access } from 'node:fs/promises';
+import { copyFile, writeFile, mkdir, rm, access } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { homedir } from 'node:os';
@@ -120,6 +120,8 @@ export async function installAgents(targetDir, options = {}) {
   // Create directories
   await mkdir(agentsDir, { recursive: true });
   await mkdir(knowledgeDir, { recursive: true });
+  const sessionsDir = join(knowledgeDir, 'sessions');
+  await mkdir(sessionsDir, { recursive: true });
 
   let installed = 0;
   let skipped = 0;
@@ -140,6 +142,18 @@ export async function installAgents(targetDir, options = {}) {
     const result = await writeAssetWithCheck(file, EMBEDDED_KNOWLEDGE[file], fallbackSrc, dest, force);
     if (result.copied) installed++;
     if (result.skipped) skipped++;
+  }
+
+  // Initialize sessions/latest.json pointer if not present
+  const latestJsonPath = join(sessionsDir, 'latest.json');
+  if (!(await fileExists(latestJsonPath))) {
+    const initialPointer = JSON.stringify({
+      initialized: new Date().toISOString(),
+      last_session_id: null,
+      status: "READY",
+      version: "0.0.2"
+    }, null, 2);
+    await writeFile(latestJsonPath, initialPointer, 'utf8');
   }
 
   return { installed, skipped };

@@ -6,9 +6,10 @@ import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
-import { detectOS, findInPath, detectPackageManagers, discoverMCPServers, fileExists } from './smart-discovery.mjs';
-import { validate } from './validator.mjs';
+import { detectOS, detectPackageManagers, discoverMCPServers, fileExists } from './smart-discovery.mjs';
 import { printBanner } from './banner.mjs';
+import { VERSION } from './constants.mjs';
+import { discoverOpenCodeModels, readAgentModels, validateModelForRole } from './model-manager.mjs';
 
 const execAsync = promisify(exec);
 
@@ -72,7 +73,7 @@ export async function runDoctor() {
   console.log(`   - Detected: ${availablePMs.length > 0 ? availablePMs.map(p => `${C.green}${p}${C.reset}`).join(', ') : `${C.yellow}None${C.reset}`}\n`);
 
   // 3. Agent Files & Validation
-  console.log(`${C.bold}3. Agent Definitions (v2.0 - 11 Agents):${C.reset}`);
+  console.log(`${C.bold}3. Agent Definitions & AI Model Health (v${VERSION} - 11 Agents):${C.reset}`);
   const AGENT_FILES = [
     'naru.md', 'pm-agent.md', 'researcher-agent.md', 'dependency-agent.md',
     'architect-agent.md', 'developer-agent.md', 'reviewer-agent.md', 'qa-agent.md',
@@ -86,17 +87,35 @@ export async function runDoctor() {
   }
   console.log(`   - Installed Globally : ${installedCount === 11 ? `${C.green}✓ 11/11 Agents Installed${C.reset}` : `${C.yellow}⚠ ${installedCount}/11 Agents Installed${C.reset}`}`);
 
+  const activeModels = await discoverOpenCodeModels();
+  const currentMappings = await readAgentModels(join(globalDir, 'agents'));
+  let modelMismatchCount = 0;
+  for (const file of AGENT_FILES) {
+    const assigned = currentMappings[file];
+    if (assigned) {
+      const modelId = typeof assigned === 'string' ? assigned : assigned.model;
+      const val = validateModelForRole(file, modelId);
+      if (!val.isOptimal) modelMismatchCount++;
+    }
+  }
+  const modelStatusStr = modelMismatchCount === 0
+    ? `${C.green}✓ 11/11 Aligned & Optimal${C.reset}`
+    : `${C.yellow}⚠ ${modelMismatchCount} Capability Mismatch(es) (Run "naru models")${C.reset}`;
+  console.log(`   - Role-Model Match   : ${modelStatusStr}`);
+
   // 4. Knowledge Stores
   const KNOWLEDGE_FILES = ['heuristics.md', 'patterns.md', 'pipeline-history.md', 'maintenance-log.md'];
   let knowCount = 0;
   for (const kf of KNOWLEDGE_FILES) {
     if (await fileExists(join(globalDir, 'knowledge', kf))) knowCount++;
   }
-  console.log(`   - RAG Knowledge Base : ${knowCount === 4 ? `${C.green}✓ 4/4 Stores Synchronized${C.reset}` : `${C.yellow}⚠ ${knowCount}/4 Stores Synchronized${C.reset}`}\n`);
+  const sessionsExist = await fileExists(join(globalDir, 'knowledge', 'sessions', 'latest.json'));
+  console.log(`   - RAG Knowledge Base : ${knowCount === 4 ? `${C.green}✓ 4/4 Stores Synchronized${C.reset}` : `${C.yellow}⚠ ${knowCount}/4 Stores Synchronized${C.reset}`}`);
+  console.log(`   - Session Memory     : ${sessionsExist ? `${C.green}✓ Initialized (.opencode/knowledge/sessions/)${C.reset}` : `${C.yellow}⚠ Not initialized${C.reset}`}\n`);
 
   // 5. MCP Servers Discovery & Status
-  console.log(`${C.bold}4. MCP Servers Health Status (5 Active Servers):${C.reset}`);
   const mcpDiscovery = await discoverMCPServers();
+  console.log(`${C.bold}4. MCP Servers Health Status (${Object.keys(mcpDiscovery).length} Discovered Servers):${C.reset}`);
 
   for (const [name, info] of Object.entries(mcpDiscovery)) {
     const statusIcon = info.available ? `${C.green}✓ AVAILABLE${C.reset}` : `${C.yellow}⚠ NOT INSTALLED${C.reset}`;
@@ -116,10 +135,13 @@ export async function runDoctor() {
         console.log(`   • ${C.bold}lean-ctx${C.reset} : Run ${C.cyan}cargo install lean-ctx${C.reset} or download from repo.`);
       } else if (name === 'codebase-memory-mcp') {
         console.log(`   • ${C.bold}codebase-memory-mcp${C.reset}: Install from codebase-memory releases.`);
+      } else if (name === 'roblox-studio') {
+        console.log(`   • ${C.bold}roblox-studio${C.reset}: Open Roblox Studio > Assistant > ... > Manage MCP Servers > Toggle ON.`);
       }
     }
   } else {
-    console.log(`\n${C.green}🎉 All 5 MCP servers and 11 subagents are in optimal operational condition!${C.reset}`);
+    console.log(`\n${C.green}🎉 All ${Object.keys(mcpDiscovery).length} MCP servers and 11 subagents are in optimal operational condition!${C.reset}`);
   }
   console.log('');
 }
+

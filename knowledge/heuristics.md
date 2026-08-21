@@ -16,7 +16,7 @@
 - **Confidence**: High
 
 ## Heuristic: H-002 (Multi-Language No-Bypass Enforcement)
-- **Trigger**: Whenever code modifications or bug fixes are authored in Go, Python, TypeScript, Rust, or Java.
+- **Trigger**: Whenever code modifications or bug fixes are authored in Go, Python, JavaScript, TypeScript, Rust, Dart, Kotlin, C, C++, C#, or Java.
 - **Action**: Prohibit untracked ignore/suppress directives and empty exception handlers. Require explicit ticket link and technical justification.
 - **Evidence**: Empirical Bug Fixing in Multi-Agent Systems (arXiv:2502.18465).
 - **Source Type**: paper

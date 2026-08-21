@@ -94,6 +94,21 @@ export async function configureMCPServers(targetDir) {
     mcpSummary['codebase-memory-mcp'] = 'Already Configured (Preserved)';
   }
 
+  
+  // 6. Roblox-Studio (Built-in Studio MCP Server)
+  if (discovered['roblox-studio']) {
+    if (!config.mcp['roblox-studio']) {
+      config.mcp['roblox-studio'] = {
+        type: 'local',
+        command: discovered['roblox-studio'].command,
+        enabled: true,
+      };
+      mcpSummary['roblox-studio'] = `Configured (${discovered['roblox-studio'].source})`;
+    } else {
+      mcpSummary['roblox-studio'] = 'Already Configured (Preserved)';
+    }
+  }
+
   // Save back safely formatted JSON
   await writeFile(jsonPath, JSON.stringify(config, null, 2) + '\n', 'utf8');
 
