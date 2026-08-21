@@ -1,0 +1,31 @@
+<header class="docs-header">
+  <div class="header-left">
+    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle Navigation Menu">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+    <a href="{{ site.baseurl }}/" class="header-brand">
+      <i class="fa-solid fa-robot brand-icon"></i>
+      <span>N.A.R.U.</span>
+      <span class="logo-badge">v0.0.2</span>
+    </a>
+  </div>
+  <div class="header-search" onclick="document.querySelector('.docs-sidebar')?.scrollIntoView({behavior:'smooth'})">
+    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+    <span>Search documentation...</span>
+    <span class="search-kbd">Ctrl K</span>
+  </div>
+  <div class="header-links">
+    <a href="{{ site.baseurl }}/getting-started/quick-start" class="header-btn btn-ghost">
+      <i class="fa-solid fa-bolt"></i>
+      <span>Quick Start</span>
+    </a>
+    <a href="{{ site.baseurl }}/architecture/overview" class="header-btn btn-ghost">
+      <i class="fa-solid fa-layer-group"></i>
+      <span>Architecture</span>
+    </a>
+    <a href="https://github.com/{{ site.repository }}" target="_blank" rel="noreferrer" class="header-btn btn-primary">
+      <i class="fa-brands fa-github"></i>
+      <span>GitHub</span>
+    </a>
+  </div>
+</header>

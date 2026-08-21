@@ -122,7 +122,7 @@ Save complete artifact to:
 
 ### 1. {Library Name} (`{version}`)
 - **Role in Project:** {what feature this powers}
-- **Contract Status:** ✅ STATUS: VERIFIED / ⚠️ STATUS: CONDITIONAL / ❌ STATUS: REJECTED / ❓ STATUS: KNOWLEDGE_GAP
+- **Contract Status:**  STATUS: VERIFIED / ️ STATUS: CONDITIONAL /  STATUS: REJECTED /  STATUS: KNOWLEDGE_GAP
 - **Behavioral Proofs:**
   - Feature `{feature_name}`: Verified in `{version}` (Source: [{doc_title}]({source_url}))
   - Range Compatibility: No breaking changes in `{version_range}`

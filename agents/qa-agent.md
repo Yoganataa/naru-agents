@@ -145,22 +145,22 @@ Depending on execution mode:
 # QA & Production Readiness Report
 
 ## Executive Summary
-- **Overall Status:** ✅ READY FOR DEPLOYMENT / ⚠️ CONDITIONAL / ❌ BLOCKED
+- **Overall Status:**  READY FOR DEPLOYMENT / ️ CONDITIONAL /  BLOCKED
 - **Total Tests Executed:** {count}
 - **Tests Passed:** {count}
 - **Tests Failed:** 0
 - **Code Coverage:** {percentage}%
-- **Visual Regression Status:** ✅ PASS (No UI anomalies detected)
+- **Visual Regression Status:**  PASS (No UI anomalies detected)
 
 ## Functional Test Matrix
 | Story ID | Acceptance Criteria | Test Case Reference | Status |
 |---|---|---|---|
-| US-001 | Given {context}, When {action}, Then {result} | `tests/user.test.ts:34` | ✅ PASS |
+| US-001 | Given {context}, When {action}, Then {result} | `tests/user.test.ts:34` |  PASS |
 
 ## Integration & Platform Results
-- **API Health Check:** ✅ HTTP 200 OK
-- **Platform Verification ({platform}):** ✅ All platform criteria satisfied
-- **Visual Regression Inspection:** ✅ Verified via multimodal screenshot analysis
+- **API Health Check:**  HTTP 200 OK
+- **Platform Verification ({platform}):**  All platform criteria satisfied
+- **Visual Regression Inspection:**  Verified via multimodal screenshot analysis
 
 ## Historical Regression Check
 - [x] No regressions against known defects in `pipeline-history.md`
@@ -186,7 +186,7 @@ Before submitting artifact:
 
 ---
 
-## 🔄 Self-Healing Flaky Test Quarantine Protocol
+Self-Healing Flaky Test Quarantine Protocol
 
 QA-Agent MUST detect and isolate non-deterministic test failures:
 1. **Flaky Test Identification**:
@@ -199,7 +199,7 @@ QA-Agent MUST detect and isolate non-deterministic test failures:
 
 ---
 
-## 🎮 Roblox Studio Automated Playtest & Quality Gate 4
+Roblox Studio Automated Playtest & Quality Gate 4
 
 QA-Agent MUST verify Roblox experiences:
 - Execute playtest sessions via StudioMCP and verify zero unhandled runtime script errors in Output log.
@@ -208,7 +208,7 @@ QA-Agent MUST verify Roblox experiences:
 
 ---
 
-## 📱 Roblox Multi-Device Emulation & Packet Fuzzing (Quality Gate 4)
+Roblox Multi-Device Emulation & Packet Fuzzing (Quality Gate 4)
 
 QA-Agent MUST test:
 - UI layout across simulated mobile (iPhone SE, Galaxy), tablet (iPad), 1080p, 4K, and 21:9 Ultrawide screens.

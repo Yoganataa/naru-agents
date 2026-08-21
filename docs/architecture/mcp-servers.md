@@ -1,13 +1,18 @@
+---
+layout: default
+title: 6-MCP Tool Fusion — N.A.R.U.
+---
+
 # 6-MCP Semantic Tool Fusion & Complete Tool Catalog
 
-N.A.R.U. integrates a **6-MCP Tool Fusion Engine** to provide semantic code intelligence, structural call-graphs, live SDK documentation, cross-session memory, and live Roblox Studio manipulation.
+N.A.R.U. integrates **6 Model Context Protocol (MCP) servers** to provide semantic code intelligence, structural call-graphs, live SDK documentation, cross-session memory, and live Roblox Studio manipulation.
 
 ---
 
-## 🛠️ Complete 6-MCP Tool Catalog (Discovered from Local Runtime)
+## Complete 6-MCP Tool Catalog (Discovered from Local Runtime)
 
-### 1. 🌐 `context7` (Upstash Managed Cloud MCP Gateway)
-- **Official Repo**: [`upstash/context7`](https://github.com/upstash/context7) | **Author**: Upstash
+### 1. context7 (Upstash Managed Cloud MCP Gateway)
+- **Author**: Upstash | **Official Repo**: [`upstash/context7`](https://github.com/upstash/context7)
 - **Complete Tool List**:
   - `resolve-library-id`: Resolves exact library package names to Context7 canonical identifiers.
   - `query-docs`: Fetches version-locked, authoritative API documentation and code examples.
@@ -16,8 +21,8 @@ N.A.R.U. integrates a **6-MCP Tool Fusion Engine** to provide semantic code inte
 
 ---
 
-### 2. 🔍 `serena` (Language Server Protocol AST Engine)
-- **Official Repo**: [`oraios/serena`](https://github.com/oraios/serena) | **Author**: Oraios
+### 2. serena (Language Server Protocol AST Engine)
+- **Author**: Oraios | **Official Repo**: [`oraios/serena`](https://oraios.github.io/serena)
 - **Complete Tool List**:
   - `find_symbol`: Locates class, function, interface, and variable symbols using language server semantics.
   - `find_referring_expressions`: Traces every calling site and reference to a symbol across the entire workspace.
@@ -28,8 +33,8 @@ N.A.R.U. integrates a **6-MCP Tool Fusion Engine** to provide semantic code inte
 
 ---
 
-### 3. 🕸️ `codegraph` (Static Call-Graph & Impact Analysis Engine)
-- **Official Repo**: [`colbymchenry/codegraph`](https://github.com/colbymchenry/codegraph) | **Author**: Colby McHenry
+### 3. codegraph (Static Call-Graph & Impact Analysis Engine)
+- **Author**: Colby McHenry | **Official Repo**: [`colbymchenry/codegraph`](https://github.com/colbymchenry/codegraph)
 - **Complete Tool List**:
   - `codegraph_explore`: Explores code areas, relevant symbol definitions, and full call paths in a single pass.
   - `codegraph_impact`: Analyzes all downstream code affected by modifying a specific function or class.
@@ -44,8 +49,8 @@ N.A.R.U. integrates a **6-MCP Tool Fusion Engine** to provide semantic code inte
 
 ---
 
-### 4. ⚡ `lean-ctx` (Context Continuity & AST Compaction Runtime)
-- **Official Repo**: [`yvgude/lean-ctx`](https://github.com/yvgude/lean-ctx) | **Author**: yvgude
+### 4. lean-ctx (Context Continuity & AST Compaction Runtime)
+- **Author**: yvgude | **Official Repo**: [`yvgude/lean-ctx`](https://leanctx.com)
 - **Complete Tool List**:
   - `ctx_compose`: Composes multi-source context from git diffs, AST outlines, and active files.
   - `ctx_compact`: Applies Tree-sitter AST compression to reduce prompt token consumption by up to 50%.
@@ -57,8 +62,8 @@ N.A.R.U. integrates a **6-MCP Tool Fusion Engine** to provide semantic code inte
 
 ---
 
-### 5. 🧠 `codebase-memory-mcp` (Persistent Knowledge Graph Memory)
-- **Official Repo**: [`DeusData/codebase-memory-mcp`](https://github.com/DeusData/codebase-memory-mcp) | **Author**: DeusData
+### 5. codebase-memory-mcp (Persistent Knowledge Graph Memory)
+- **Author**: DeusData | **Official Repo**: [`DeusData/codebase-memory-mcp`](https://github.com/DeusData/codebase-memory-mcp)
 - **Complete Tool List**:
   - `create_entity`: Stores architectural decisions, domain models, and conventions into SQLite graph memory.
   - `create_relation`: Maps relationships between architectural components and modules.
@@ -71,8 +76,8 @@ N.A.R.U. integrates a **6-MCP Tool Fusion Engine** to provide semantic code inte
 
 ---
 
-### 6. 🎮 `roblox-studio` (Roblox Studio Built-in Native StudioMCP 1.0.0)
-- **Official Docs**: [create.roblox.com/docs/art/ai/mcp-setup](https://create.roblox.com/docs/art/ai/mcp-setup) | **Author**: Roblox Corporation
+### 6. roblox-studio (Roblox Studio Built-in Native StudioMCP 1.0.0)
+- **Author**: Roblox Corporation | **Official Docs**: [`create.roblox.com/docs`](https://create.roblox.com/docs/art/ai/mcp-setup)
 - **Platform Support**: **Exclusively Windows and macOS** (*Gracefully bypassed on Linux*).
 - **Complete Tool List**:
   - `script_read`: Reads script source directly from the live DataModel (`game.ServerScriptService.MyScript`).

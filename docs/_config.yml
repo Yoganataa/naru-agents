@@ -1,10 +1,13 @@
-# GitHub Pages Configuration
+# N.A.R.U. Modern Documentation Configuration (GitHub Pages)
 title: N.A.R.U. Documentation
-description: Next-gen Autonomous Role-based Unified Agents for OpenCode
-theme: jekyll-theme-cayman
-baseurl: /naru-agents
-url: https://yoganataa.github.io
+description: "Next-gen Autonomous Role-based Unified Agents for OpenCode"
+repository: "yoganataa/naru-agents"
+baseurl: "/naru-agents"
+url: "https://yoganataa.github.io"
 markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
 plugins:
-  - jekyll-feed
   - jekyll-seo-tag

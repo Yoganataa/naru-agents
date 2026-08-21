@@ -123,7 +123,7 @@ Save deployment report to:
 ## Target Infrastructure
 - **Platform:** Vercel / Cloudflare / Heroku / VPS-Homelab / Railway / Bot
 - **Environment:** Production / Staging
-- **Status:** ✅ CONFIGURED / 🚀 DEPLOYED / ⏳ PENDING USER APPROVAL
+- **Status:**  CONFIGURED /  DEPLOYED / ⏳ PENDING USER APPROVAL
 
 ## Files Generated / Modified
 - `.github/workflows/deploy-{platform}.yml`

@@ -155,7 +155,7 @@ Save summary report to:
 
 ---
 
-## 📊 Living Architecture & OpenAPI 3.1 Generation Engine
+Living Architecture & OpenAPI 3.1 Generation Engine
 
 Docs-Agent MUST automatically formulate living visual diagrams and API specifications:
 1. **Mermaid Entity-Relationship Diagram (ERD)**:

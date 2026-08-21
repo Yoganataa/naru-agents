@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>{{ page.title | default: site.title }}</title>
+  <meta name="description" content="N.A.R.U. - Autonomous AI Multi-Agent Platform for OpenCode">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="{{ site.baseurl }}/assets/css/modern-docs.css">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+  {% include header.html %}
+  <div class="docs-wrapper">
+    {% include sidebar.html %}
+    <main class="docs-main">
+      {{ content }}
+    </main>
+    <aside class="docs-toc" id="docsToc">
+      <div class="toc-title">On This Page</div>
+      <ul class="toc-list" id="tocList"></ul>
+    </aside>
+  </div>
+  <script src="{{ site.baseurl }}/assets/js/docs.js"></script>
+</body>
+</html>

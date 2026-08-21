@@ -7,6 +7,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [0.0.2] - 2026-08-21
 
+### Added & Overhauled
+- **Modern Documentation Portal Engine**: Redesigned entire documentation site using high-end Mintlify/VitePress dark obsidian aesthetic (#090D16), glassmorphic sticky navbar, sticky left sidebar, and automatic TOC scroll-spy.
+- **Mastery-Level Documentation Content**: Completely rewrote all 10 documentation pages with deep architectural accuracy:
+  - docs/index.md: Redesigned homepage featuring Hero showcase, 6 Bento grid architectural pillars, and navigation matrix.
+  - docs/getting-started/installation.md: Accurate GitHub shorthand installation (bun install -g github:yoganataa/naru-agents, npm install -g github:yoganataa/naru-agents, native single-file binary).
+  - docs/getting-started/quick-start.md: Step-by-step OpenCode interactive workflow tutorial covering @naru invocation, Step 0 intake questionnaire, and autonomous multi-agent pipeline execution.
+  - docs/getting-started/troubleshooting.md: Complete CLI command reference for naru setup, naru doctor, naru models, naru init repo, naru backup, and naru validate.
+  - docs/architecture/overview.md: 11-Agent cognitive roster deep dive with 5 cognitive clusters, step budgets, temperature tuning, and Quality Gate boundaries.
+  - docs/architecture/models-and-reasoning.md: Complete registry of 7 OpenCode models, Artificial Analysis Intelligence Index benchmarks (AA Index 54.0 to 38.0), and Step 0.5 Smart Modality Guard (Vision vs Text-Only).
+  - docs/architecture/mcp-servers.md: 6-MCP tool fusion catalog detailing live tool schemas for Context7, Serena LSP, CodeGraph, Lean-ctx, Codebase Memory, and Roblox Studio MCP.
+  - docs/architecture/session-knowledge.md: Two-Tier MemGPT episodic memory snapshots, heuristic reflection evolution, and persistent SQLite knowledge graphs.
+  - docs/workflow/pipelines.md: 5 intent taxonomies and 4 Quality Gate sign-off criteria (PRD, ADR, Security, E2E).
+  - docs/workflow/no-bypass-policy.md: Universal 8-Platform Security Matrix, Roblox hardened anti-cheat & responsive UI standards, and clean backend architecture.
+- **Zero Emojis Mandate**: Stripped all emojis and emoticons across all documentation pages, navbar, sidebar, bento cards, and agent system prompts.
+
+
 ### Added
 - **Comprehensive OpenCode Model Registry & Benchmark Grounding**:
   - Full catalog of all 7 active OpenCode models with Artificial Analysis Intelligence Index ratings, context windows, output limits, and architectural assignment rationales.

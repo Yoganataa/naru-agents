@@ -88,7 +88,7 @@ You MUST adhere to the multi-language No-Bypass rules across all project languag
 - Ensure database modifications (if any) are additive and non-destructive.
 
 ### Step 4: Verification & Regression Testing
-- Run the newly created regression test (must transition from RED ❌ to GREEN ✅).
+- Run the newly created regression test (must transition from RED  to GREEN ).
 - Run the complete project test suite across all languages (`npm test`, `go test ./...`, `pytest`, `cargo test`) to ensure zero regressions.
 
 ### Step 5: Live-Patch & Rollback Assessment
@@ -120,11 +120,11 @@ Save report to:
 ## Changes Applied
 - **Modified Files:** {list of files}
 - **Regression Test File:** `tests/{test_file}`
-- **No-Bypass Attestation:** ✅ Verified clean (no silent catches, no untracked ignores)
+- **No-Bypass Attestation:**  Verified clean (no silent catches, no untracked ignores)
 
 ## Verification Results
-- **Reproducing Test:** Passed ✅
-- **Full Test Suite:** Passed ✅ (0 failures)
+- **Reproducing Test:** Passed 
+- **Full Test Suite:** Passed  (0 failures)
 
 ## Live Patch Safety & Rollback Plan
 - **Process Restart Required:** Yes / No
@@ -164,7 +164,7 @@ To eliminate cognitive deadlocks and overacting loops (arXiv:2502.04899):
 
 ---
 
-## 🔄 Automated Flaky Test Healing Engine
+Automated Flaky Test Healing Engine
 
 Hotfix-Agent MUST repair quarantined flaky tests:
 - Replace static sleep/timeout (`setTimeout(100)`) with deterministic polling assertions (`waitFor(() => expect(...))`).

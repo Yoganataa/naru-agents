@@ -1,72 +1,59 @@
+---
+layout: default
+title: Installation Guide — N.A.R.U.
+---
+
 # Installation Guide
 
-N.A.R.U. provides zero-friction installation options tailored for **Windows**, **macOS**, and **Linux** environments.
+N.A.R.U. is distributed directly via GitHub and pre-compiled native executables for **Windows**, **macOS**, and **Linux**.
 
 ---
 
-## Method 1: Native Single-File Binary (Recommended)
+## 1. Global Installation Methods
 
-Compiled directly into a self-contained native executable using Bun. It features **sub-10ms startup times**, requires **zero Node.js or Bun runtime dependencies on host**, and is completely immune to Windows PowerShell `ExecutionPolicy` restrictions.
-
-### Windows (PowerShell):
-```powershell
-# Run smart automated setup
+### Method A: Using Bun (Recommended)
+```bash
+bun install -g github:yoganataa/naru-agents
 naru setup --auto
+```
 
-# Inspect model configurations
-naru models
+### Method B: Using NPM
+```bash
+npm install -g github:yoganataa/naru-agents
+naru setup --auto
+```
 
-# Run system health diagnostics
+### Method C: Using Standalone Native Binary
+Download or compile the single-file binary (`naru.exe` on Windows, `naru` on Linux/macOS) and place it in your system `PATH` (e.g. `~/.local/bin/`):
+```bash
+naru setup --auto
+```
+
+---
+
+## 2. What naru setup --auto Does
+
+When you run `naru setup --auto`, the installer automatically executes:
+1. **Safety Backup**: Creates an immutable snapshot of your existing OpenCode configuration in `~/.config/opencode/.backups/`.
+2. **Subagent Installation**: Copies all 11 subagents and the knowledge base into `~/.config/opencode/agents/` and `~/.config/opencode/knowledge/`.
+3. **6-MCP Auto-Configuration**: Discovers locally installed MCP tools and merges configurations for all 6 servers (`context7`, `serena`, `codegraph`, `lean-ctx`, `codebase-memory-mcp`, and `roblox-studio`) into `~/.config/opencode/opencode.json`.
+4. **Post-Install Doctor Audit**: Runs an automatic health check verifying runtime dependencies, agent models, and MCP tool availability.
+
+---
+
+## 3. System Requirements
+
+- **Operating System**: Windows 10/11 (x64), macOS 12+ (Apple Silicon / Intel), Linux (Ubuntu 20.04+, Debian 11+, Fedora 38+, Arch Linux).
+- **Runtimes**: Node.js 18+ or Bun 1.0+.
+- **OpenCode CLI**: OpenCode CLI installed and accessible in your shell (`opencode`).
+- **Version Control**: Git 2.30+.
+
+---
+
+## 4. Post-Installation Verification
+
+Run the diagnostic doctor to confirm all systems are operational:
+
+```bash
 naru doctor
 ```
-
----
-
-## Method 2: Global Package Manager (Bun / npm)
-
-```bash
-# Install globally using Bun (Recommended)
-bun install -g github:yoganataa/naru-agents
-
-# Or install globally using npm
-npm install -g github:yoganataa/naru-agents
-
-# Launch the Smart Setup Wizard
-naru setup
-```
-
----
-
-## Method 3: One-Liner Shell Script (Linux & macOS)
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/yoganataa/naru-agents/main/install.sh | bash
-```
-
----
-
-## Method 4: Zero-Install Instant Execution
-
-Execute directly without global installation:
-
-```bash
-# Using Bun
-bunx github:yoganataa/naru-agents setup --auto
-
-# Using npx
-npx github:yoganataa/naru-agents setup --auto
-```
-
----
-
-## 🛠️ Optional: Installing MCP Servers for Full 5-MCP Fusion
-
-While N.A.R.U. operates out-of-the-box, installing all 5 local MCP servers unlocks deep AST symbol resolution, caller-callee exploration, and persistent SQLite knowledge graphs:
-- 🌐 **`context7`**: Remote Cloud (Zero install)
-- 🔍 **`serena`**: `pipx install serena`
-- 🕸️ **`codegraph`**: `npm install -g codegraph-mcp`
-- ⚡ **`lean-ctx`**: `cargo install lean-ctx`
-- 🧠 **`codebase-memory-mcp`**: `npm install -g codebase-memory-mcp`
-
-Read the complete [**5-MCP Installation Guide**](../architecture/mcp-servers.md) for full cross-platform instructions and official repository links.
-

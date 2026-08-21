@@ -61,8 +61,8 @@ You receive:
 ### Step 1: Temporal Grounding & Evidence Gathering via Live Registries
 - **Anti-Cutoff & Query Sanitization Rule**:
   - You are **STRICTLY PROHIBITED** from appending your internal training cutoff year (e.g. `2024`, `2025`) to search queries.
-  - ❌ **Forbidden Queries**: `"best react router 2025"`, `"bun latest features 2025"`, `"playwright guide 2024"`.
-  - ✅ **Mandatory Query Pattern (Step-Back & Structural Release Anchors)**:
+  -  **Forbidden Queries**: `"best react router 2025"`, `"bun latest features 2025"`, `"playwright guide 2024"`.
+  -  **Mandatory Query Pattern (Step-Back & Structural Release Anchors)**:
     - `"{library_name} changelog latest stable"`
     - `"site:github.com/{org}/{repo}/releases latest"`
     - `"{framework} migration guide release notes"`
@@ -102,7 +102,7 @@ Save artifact to:
 ## Research Findings
 
 ### Finding 1: {Technical Recommendation / Topic}
-- **Evaluation Status:** ✅ VERIFIED / ❓ KNOWLEDGE_GAP
+- **Evaluation Status:**  VERIFIED /  KNOWLEDGE_GAP
 - **Recommended Stack / Version:** `{library}` (`{exact_version}`)
 - **Evidence Summary:** {Direct factual summary from documentation}
 - **Constraints & Trade-offs:** {Performance, maintenance, memory footprint}
@@ -152,6 +152,6 @@ Before proposing or approving any third-party library or dependency:
      - Researcher-Agent MUST verify whether the targeted pinned version **officially resolves and patches** the vulnerability.
      - Extract proof of resolution (Advisory ID, release tag, changelog commit).
 3. **Security Categorization**:
-   - `STATUS: SECURITY_CLEAN` ➔ Zero reported critical/high advisories in package history.
-   - `STATUS: HISTORICAL_INCIDENT_RESOLVED` ➔ Past incident verified fully patched in target version (include patch proof).
-   - `STATUS: REJECTED - ACTIVE_SECURITY_THREAT` ➔ Unpatched vulnerability or suspicious package (prohibit adoption).
+   - `STATUS: SECURITY_CLEAN`  Zero reported critical/high advisories in package history.
+   - `STATUS: HISTORICAL_INCIDENT_RESOLVED`  Past incident verified fully patched in target version (include patch proof).
+   - `STATUS: REJECTED - ACTIVE_SECURITY_THREAT`  Unpatched vulnerability or suspicious package (prohibit adoption).

@@ -106,12 +106,12 @@ Save complete artifact to:
 # Review Report
 
 ## Review Summary
-- **Overall Status:** ✅ APPROVED / ⚠️ APPROVED WITH MINOR ISSUES / ❌ CHANGES REQUESTED
+- **Overall Status:**  APPROVED / ️ APPROVED WITH MINOR ISSUES /  CHANGES REQUESTED
 - **Critical Issues:** {count} (Must fix before QA)
 - **Major Issues:** {count} (Should fix)
 - **Minor Issues:** {count} (Nice to fix)
 - **Goal Drift Detected:** Yes / No
-- **No-Bypass Compliance:** ✅ PASSED / ❌ VIOLATION FOUND
+- **No-Bypass Compliance:**  PASSED /  VIOLATION FOUND
 
 ## Critical Findings (Blocker to QA Gate)
 ### CR-001: {Title}
@@ -121,10 +121,10 @@ Save complete artifact to:
 - **Required Fix:** {Exact remediation instructions}
 
 ## Compliance Matrix
-- [x/✗] Goal Baseline Alignment (No missing stories, no unauthorized scope creep)
-- [x/✗] Multi-Language No-Bypass Clean (No silent catches, no untracked ignores)
-- [x/✗] Dependency Compliance (All imports verified in dependency-contracts.md)
-- [x/✗] OWASP Top 10 Security Clean (No injection or credential exposure)
+- [x/] Goal Baseline Alignment (No missing stories, no unauthorized scope creep)
+- [x/] Multi-Language No-Bypass Clean (No silent catches, no untracked ignores)
+- [x/] Dependency Compliance (All imports verified in dependency-contracts.md)
+- [x/] OWASP Top 10 Security Clean (No injection or credential exposure)
 ```
 
 ## Quality Gates
@@ -181,7 +181,7 @@ Reviewer-Agent MUST execute specialized security audits based on project archety
 
 ---
 
-## 🎨 Frontend Craftsmanship & Anti-Slop Audit (Quality Gate 3)
+Frontend Craftsmanship & Anti-Slop Audit (Quality Gate 3)
 
 Reviewer-Agent MUST audit all frontend code against AI Slop:
 1. **5 States of UI Check**: Verify that data components implement Skeleton, Empty, Error (with Retry), and Optimistic states.
@@ -192,7 +192,7 @@ Reviewer-Agent MUST audit all frontend code against AI Slop:
 
 ---
 
-## 🏛️⚙️ Backend & Clean Architecture Audit (Quality Gate 3)
+## ️️ Backend & Clean Architecture Audit (Quality Gate 3)
 
 Reviewer-Agent MUST audit backend code against 6 Pillars of Excellence:
 1. **Hexagonal Domain Isolation Check**: Reject any direct database or vendor SDK imports inside `src/domain/`.
@@ -204,7 +204,7 @@ Reviewer-Agent MUST audit backend code against 6 Pillars of Excellence:
 
 ---
 
-## 🎮 Roblox Game & Map Audit Checklist (Quality Gate 3)
+Roblox Game & Map Audit Checklist (Quality Gate 3)
 
 Reviewer-Agent MUST audit Roblox Luau code and map structures:
 1. **Map Optimization Check**: Verify all static parts are `Anchored = true`, decorative props have `CanCollide = false` & `CanQuery = false`, and `StreamingEnabled = true`.
@@ -215,7 +215,7 @@ Reviewer-Agent MUST audit Roblox Luau code and map structures:
 
 ---
 
-## 🛡️📱 Roblox Hardened Security & Responsive UI Audit (Quality Gate 3)
+## ️ Roblox Hardened Security & Responsive UI Audit (Quality Gate 3)
 
 Reviewer-Agent MUST enforce:
 1. **Zero InvokeClient Audit**: Reject any occurrence of `RemoteFunction:InvokeClient()`.

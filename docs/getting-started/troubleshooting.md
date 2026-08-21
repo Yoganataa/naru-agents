@@ -1,41 +1,107 @@
-# Troubleshooting & Diagnostics
+---
+layout: default
+title: CLI Command Reference — N.A.R.U.
+---
 
-N.A.R.U. provides built-in self-healing and diagnostic mechanisms to ensure production reliability.
+# CLI Command Reference & Diagnostics
+
+N.A.R.U. provides a comprehensive suite of command-line utilities for installation, health diagnostics, model management, and cold-start indexing.
 
 ---
 
-## 1. System Health Audit (`naru doctor`)
+## 1. naru setup — Smart System Setup
 
-If you encounter missing agents or unrecognized tools, run:
+Automates the installation and configuration of all subagents and MCP servers.
+
+```bash
+# Interactive setup with confirmation prompts
+naru setup
+
+# Fully automated non-interactive setup (CI / Headless)
+naru setup --auto
+```
+
+**What it does:**
+- Creates a safety backup snapshot in `~/.config/opencode/.backups/`.
+- Installs 11 subagent files and 4 knowledge base stores into `~/.config/opencode/`.
+- Discovers local binaries and auto-configures all 6 MCP servers in `opencode.json`.
+
+---
+
+## 2. naru doctor — System Diagnostic & Health Audit
+
+Performs a thorough, automated diagnostic of your local environment:
+
 ```bash
 naru doctor
 ```
-`naru doctor` performs a 4-point health inspection:
-1. **Host Environment**: Node.js, Bun, Git, OpenCode CLI presence.
-2. **Package Managers**: Detection of bun, npm, cargo, pip, winget, etc.
-3. **Subagent Definitions & Role-Model Match**: Ensures 11/11 agents are installed in `~/.config/opencode/agents` and validates cognitive capability matches.
-4. **5-MCP Server Connectivity**: Confirms availability of `context7`, `serena`, `codegraph`, `lean-ctx`, and `codebase-memory-mcp`.
+
+**Diagnostic Checks:**
+1. **System & Runtime Environment**: Node.js, Bun, Git, OpenCode CLI version, and config directory paths.
+2. **Package Managers**: Detects `bun`, `npm`, `cargo`, `pip`, and `winget`.
+3. **Agent Definitions & AI Models**: Verifies 11/11 agents installed, role-model alignment, and RAG stores.
+4. **6-MCP Server Status**: Tests availability of `context7`, `serena`, `codegraph`, `lean-ctx`, `codebase-memory-mcp`, and `roblox-studio`.
 
 ---
 
-## 2. Automatic Backup Snapshots & Rollback
+## 3. naru models — Interactive Model & Reasoning Manager
 
-Before any installation or modification, N.A.R.U. automatically creates a timestamped safety snapshot in:
-```
-~/.config/opencode/.backups/snapshot_{TIMESTAMP}/
-```
-If you ever need to revert to a previous state:
+Allows discovering local OpenCode models, adjusting reasoning effort variants, or assigning custom models with capability validation:
+
 ```bash
-naru rollback
+# Launch interactive model management menu
+naru models
+
+# List discovered OpenCode models and capability badges non-interactively
+naru models --list
+```
+
+**Available Interactive Actions:**
+- **Option 1**: Apply 1 unified model across all 11 subagents.
+- **Option 2**: Configure models by Cognitive Role Cluster (Strategic Triad, Coding, QA, DevOps, etc.).
+- **Option 3**: Configure individual subagents (Model and Reasoning Variant).
+- **Option 4**: Reset all 11 subagents to N.A.R.U. optimal benchmark defaults.
+
+---
+
+## 4. naru init repo — Cold-Start Repository Indexing
+
+Initializes N.A.R.U. in any existing or new repository:
+
+```bash
+naru init repo
+```
+
+**What it does:**
+- Scans the repository using CodeGraph and Serena LSP.
+- Generates an architectural blueprint (`.opencode/artifacts/architecture-blueprint.md`).
+- Seeds the persistent SQLite knowledge graph via Codebase Memory MCP.
+
+---
+
+## 5. naru backup — Safety Snapshot Manager
+
+Manages configuration backups and rollbacks:
+
+```bash
+# Create an immediate configuration snapshot
+naru backup
+
+# List all existing safety snapshots
+naru backup --list
+
+# Restore configuration from a specific snapshot timestamp
+naru backup --restore <snapshot-id>
 ```
 
 ---
 
-## 3. Windows PowerShell Script Execution Policy Fix
+## 6. naru validate — Frontmatter & Permission Validator
 
-If PowerShell blocks running global npm scripts (`File ... cannot be loaded because running scripts is disabled on this system`):
-- **Solution A**: Use the standalone native binary `naru.exe` located in `~/.local/bin/naru.exe`.
-- **Solution B**: Set execution policy for the current user:
-  ```powershell
-  Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-  ```
+Validates all subagent markdown files against OpenCode schema standards:
+
+```bash
+naru validate
+```
+
+Ensures all 11 subagents contain valid YAML frontmatter, step budgets, and granular tool permissions.

@@ -122,7 +122,7 @@ graph TD
 ## 4. Dependency Risk & Verification Matrix
 | Library | Version | Contract Status | Risk Mitigation (if CONDITIONAL) |
 |---|---|---|---|
-| {lib} | {version} | ✅ VERIFIED / ⚠️ CONDITIONAL | {mitigation in ADR} |
+| {lib} | {version} |  VERIFIED / ️ CONDITIONAL | {mitigation in ADR} |
 
 ## 5. API & Data Contracts
 ```typescript
@@ -201,7 +201,7 @@ Architect-Agent MUST provide structured architectural blueprints tailored to the
 
 ---
 
-## ⚡ High-Throughput & Low-Latency Architecture Blueprint
+High-Throughput & Low-Latency Architecture Blueprint
 
 Architect-Agent MUST design schemas and data flows with performance optimization:
 - **Eager Relation Modeling**: Define database relationships using batch fetching and eager loading strategies.
@@ -211,7 +211,7 @@ Architect-Agent MUST design schemas and data flows with performance optimization
 
 ---
 
-## 🎨 Design System & Token Architecture Standards
+Design System & Token Architecture Standards
 
 Architect-Agent MUST curate distinctive design tokens:
 - **Typography Pairings**: Specify intentional fonts (e.g. *Geist*, *Plus Jakarta Sans*, *Outfit* for headings; *Inter* / *Geist Sans* for body; *JetBrains Mono* for code).
@@ -220,7 +220,7 @@ Architect-Agent MUST curate distinctive design tokens:
 
 ---
 
-## 🏛️ Hexagonal & Clean Architecture Blueprint
+## ️ Hexagonal & Clean Architecture Blueprint
 
 Architect-Agent MUST formulate modular project architectures:
 - Define `domain`, `ports`, and `adapters` boundaries clearly.
@@ -229,7 +229,7 @@ Architect-Agent MUST formulate modular project architectures:
 
 ---
 
-## 🎮 Roblox Luau System & Map Architecture
+Roblox Luau System & Map Architecture
 
 Architect-Agent MUST design Roblox systems with:
 - Strict realm isolation (`ServerScriptService` vs `ReplicatedStorage` vs `StarterPlayer`).
@@ -240,7 +240,7 @@ Architect-Agent MUST design Roblox systems with:
 
 ---
 
-## 📱 Roblox Multi-Screen UI & Anti-Exploit Topology
+Roblox Multi-Screen UI & Anti-Exploit Topology
 
 Architect-Agent MUST formulate:
 

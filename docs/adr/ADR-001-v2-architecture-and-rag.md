@@ -1,3 +1,7 @@
+---
+layout: default
+---
+
 # ADR-001: N.A.R.U. (v0.0.2) Multi-Agent Architecture and Production RAG Grounding
 
 - **Status:** Accepted
