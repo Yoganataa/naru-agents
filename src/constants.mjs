@@ -49,6 +49,10 @@ export const BANNER_PRESETS = {
     system: `${APP_NAME} — Reflexion Loop & Dynamic Knowledge Evolution (v${VERSION})`,
     commands: 'naru evolve | naru doctor | opencode',
   },
+  harness: {
+    system: `${APP_NAME} — Ultra-Strict Headless Test Harness (SWE-bench Verified) (v${VERSION})`,
+    commands: 'naru harness | naru eval | naru audit',
+  },
   update: {
     system: `${APP_NAME} — Auto-Update & Self-Upgrade Engine (v${VERSION})`,
     commands: 'naru doctor',

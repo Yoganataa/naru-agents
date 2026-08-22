@@ -187,6 +187,13 @@ switch (args.command) {
     await runSelfEvolutionCLI();
     break;
 
+  case 'harness':
+  case 'test:harness':
+  case 'test:workflow':
+    const { runTestHarnessCLI } = await import('../src/test-harness.mjs');
+    await runTestHarnessCLI(args);
+    break;
+
   case 'help':
   case '--help':
   case '-h':
@@ -221,6 +228,7 @@ Commands:
   audit               Autonomous Self-Audit: scan subagents, permission boundaries & guardrails
   eval, test:agents   Adversarial Self-Testing: simulate 12 bypass attacks & measure resilience
   evolve              Reflexion Evolution: distill new heuristics into institutional memory
+  harness             Ultra-Strict Test Harness: SWE-bench verified 5-invariant sandbox evaluation
   update, upgrade     Auto-upgrade global package and re-sync OpenCode agents & MCPs
   install             Install agents to opencode config
   uninstall           Remove installed agents
