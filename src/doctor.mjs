@@ -118,15 +118,24 @@ export async function runDoctor() {
   console.log(`${C.bold}4. MCP Servers Health Status (${Object.keys(mcpDiscovery).length} Discovered Servers):${C.reset}`);
 
   for (const [name, info] of Object.entries(mcpDiscovery)) {
-    const statusIcon = info.available ? `${C.green}✓ AVAILABLE${C.reset}` : `${C.yellow}⚠ NOT INSTALLED${C.reset}`;
+    let statusIcon;
+    if (!info.available) {
+      statusIcon = `${C.yellow}⚠ NOT INSTALLED${C.reset}`;
+    } else if (info.needsInit) {
+      statusIcon = `${C.yellow}⚠ INSTALLED — NOT INITIALIZED${C.reset}`;
+    } else if (info.needsKey) {
+      statusIcon = `${C.yellow}⚠ AVAILABLE (Degraded)${C.reset}`;
+    } else {
+      statusIcon = `${C.green}✓ AVAILABLE${C.reset}`;
+    }
     console.log(`   - ${C.bold}${name.padEnd(20)}${C.reset} : [${statusIcon}] - ${info.source || 'Binary not found in PATH'}`);
   }
 
-  // 6. Actionable Recommendations
-  const missingMCPs = Object.entries(mcpDiscovery).filter(([_, info]) => !info.available);
-  if (missingMCPs.length > 0) {
-    console.log(`\n${C.bold}${C.yellow}💡 Recommended Remediation Commands for Missing Tools:${C.reset}`);
-    for (const [name] of missingMCPs) {
+  // 6. Actionable Recommendations (including self-healing for degraded states)
+  const needsAttention = Object.entries(mcpDiscovery).filter(([_, info]) => !info.available || info.needsInit || info.needsKey);
+  if (needsAttention.length > 0) {
+    console.log(`\n${C.bold}${C.yellow}💡 Recommended Remediation Commands:${C.reset}`);
+    for (const [name, info] of needsAttention) {
       if (name === 'serena') {
         console.log(`   • ${C.bold}serena${C.reset}   : Run ${C.cyan}pip install serena-agent${C.reset} or check release binaries.`);
       } else if (name === 'codegraph') {
@@ -135,9 +144,23 @@ export async function runDoctor() {
         console.log(`   • ${C.bold}lean-ctx${C.reset} : Run ${C.cyan}cargo install lean-ctx${C.reset} or download from repo.`);
       } else if (name === 'codebase-memory-mcp') {
         console.log(`   • ${C.bold}codebase-memory-mcp${C.reset}: Install from codebase-memory releases.`);
+      } else if (name === 'context7') {
+        console.log(`   • ${C.bold}context7${C.reset}  : ${info.needsKey ? `API key missing — fallback to webfetch active. Set ${C.cyan}CONTEXT7_API_KEY=ctx7sk_...${C.reset}` : `${C.green}Ready${C.reset}`}`);
       } else if (name === 'roblox-studio') {
         console.log(`   • ${C.bold}roblox-studio${C.reset}: Open Roblox Studio > Assistant > ... > Manage MCP Servers > Toggle ON.`);
       }
+      // Self-healing hints for degraded but installed tools
+      if (info.needsInit) {
+        console.log(`     ↳ Self-heal: Run ${C.cyan}codegraph init${C.reset} (or ${C.cyan}naru init${C.reset}) to create .codegraph/ index`);
+      }
+      if (info.needsKey) {
+        console.log(`     ↳ Fix: Set ${C.cyan}CONTEXT7_API_KEY=ctx7sk_...${C.reset} in env or opencode.json — fallback to webfetch until configured`);
+      }
+    }
+    // Offer auto-heal shortcut if only codegraph needs init
+    const codegraphNeedsInit = mcpDiscovery.codegraph?.needsInit;
+    if (codegraphNeedsInit) {
+      console.log(`\n   ${C.cyan}Run 'npx codegraph init' now? → auto-creates index (877ms, no reinstall needed)${C.reset}`);
     }
   } else {
     console.log(`\n${C.green}🎉 All ${Object.keys(mcpDiscovery).length} MCP servers and 11 subagents are in optimal operational condition!${C.reset}`);

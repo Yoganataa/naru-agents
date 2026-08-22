@@ -33,11 +33,13 @@ export function parseArgs(argv) {
       case 'init':
       case 'models':
       case 'model':
+      case 'mcp':
+      case 'context7':
       case 'new':
       case 'create':
       case 'update':
       case 'upgrade':
-        result.command = arg;
+        if (result.command === undefined) result.command = arg;
         break;
       case '--global':
       case '-g':

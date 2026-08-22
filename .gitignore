@@ -29,6 +29,23 @@ validate-all.js
 *.log
 npm-debug.log*
 
+# Naru Self-Healing Generated — DO NOT COMMIT (regenerated via `naru init` / `codegraph init` / `naru setup`)
+# These are local runtime artifacts for the developer or end-user's machine.
+# The repo's canonical source is `agents/`, `knowledge/`, `src/`, `docs/`, `bin/`.
+.codegraph/
+.opencode/
+.serena/
+coverage/
+.nyc_output/
+*.db
+*.db-journal
+*.sqlite
+*.sqlite-journal
+
+# Bun lock (use package-lock.json as source of truth)
+bun.lock
+bun.lockb
+
 # Build output
 dist/
 build/

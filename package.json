@@ -45,5 +45,8 @@
   "homepage": "https://github.com/yoganataa/naru-agents#readme",
   "devDependencies": {
     "marked": "^18.0.10"
+  },
+  "dependencies": {
+    "@opentui/core": "^0.5.6"
   }
 }

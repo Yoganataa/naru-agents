@@ -94,12 +94,31 @@ export async function discoverMCPServers() {
   const home = homedir();
   const localAppData = process.env.LOCALAPPDATA || join(home, 'AppData', 'Local');
 
+  // Helper: check context7 API key (ctx7sk_*) in env or opencode.json — strict ctx7sk only
+  async function checkContext7Key() {
+    if (process.env.CONTEXT7_API_KEY && process.env.CONTEXT7_API_KEY.startsWith('ctx7sk')) return true;
+    try {
+      const { readFile } = await import('node:fs/promises');
+      const globalConfigPath = join(homedir(), '.config', 'opencode', 'opencode.json');
+      const content = await readFile(globalConfigPath, 'utf8');
+      if (content.includes('ctx7sk')) return true;
+      // Also check env-style key in config (e.g., "CONTEXT7_API_KEY": "ctx7sk_...")
+      if (/ctx7sk_[A-Za-z0-9_-]{10,}/.test(content)) return true;
+    } catch {}
+    return false;
+  }
+
+  const hasContext7Key = await checkContext7Key();
+
   const results = {
     'context7': {
       available: true,
       type: 'remote',
       url: 'https://mcp.context7.com/mcp',
-      source: 'Remote Cloud Endpoint (Zero install required)',
+      source: hasContext7Key
+        ? 'Remote Cloud Endpoint (Zero install required) — API key configured ✓'
+        : 'Remote Cloud Endpoint (Zero install) — ⚠ No ctx7sk key: will fallback to webfetch (set CONTEXT7_API_KEY for full docs)',
+      needsKey: !hasContext7Key,
     },
     'serena': {
       available: false,
@@ -134,11 +153,36 @@ export async function discoverMCPServers() {
     results.serena.source = `Found in PATH: ${serenaPath}`;
   }
 
-  // 2. Discover codegraph
+  // 2. Discover codegraph — binary + index health (self-healing aware)
   const codegraphPath = await findInPath('codegraph');
   if (codegraphPath) {
     results.codegraph.available = true;
-    results.codegraph.source = `Found in PATH: ${codegraphPath}`;
+    // Check if index is initialized (self-healing gap: binary exists but .codegraph missing)
+    const codegraphIndexDb = join(process.cwd(), '.codegraph', 'codegraph.db');
+    const codegraphDir = join(process.cwd(), '.codegraph');
+    const hasIndexDb = await fileExists(codegraphIndexDb);
+    const hasIndexDir = await fileExists(codegraphDir);
+    if (hasIndexDb) {
+      // Try to verify index is not stale via codegraph status
+      try {
+        const { stdout } = await execAsync('codegraph status 2>&1');
+        if (stdout.includes('Not initialized')) {
+          results.codegraph.source = `Found in PATH: ${codegraphPath} (⚠ Index not initialized — run 'codegraph init' or 'naru init')`;
+          results.codegraph.needsInit = true;
+        } else if (stdout.includes('Index is up to date') || stdout.includes('Files:')) {
+          results.codegraph.source = `Found in PATH: ${codegraphPath} (✓ Index ready)`;
+          results.codegraph.indexReady = true;
+        } else {
+          results.codegraph.source = `Found in PATH: ${codegraphPath}`;
+        }
+      } catch {
+        results.codegraph.source = `Found in PATH: ${codegraphPath}${hasIndexDir ? ' (Index check skipped)' : ' (⚠ Index not initialized)'}`;
+        if (!hasIndexDir) results.codegraph.needsInit = true;
+      }
+    } else {
+      results.codegraph.source = `Found in PATH: ${codegraphPath} (⚠ Index not initialized — run 'codegraph init' to enable call-graph)`;
+      results.codegraph.needsInit = true;
+    }
   }
 
   // 3. Discover lean-ctx

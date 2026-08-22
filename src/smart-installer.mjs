@@ -1,11 +1,16 @@
 import { join } from 'node:path';
 import { homedir } from 'node:os';
+import { exec } from 'node:child_process';
+import { promisify } from 'node:util';
 import { install } from './installer.mjs';
 import { createBackup } from './backup-manager.mjs';
 import { configureMCPServers } from './mcp-configurator.mjs';
 import { runDoctor } from './doctor.mjs';
 import { printBanner } from './banner.mjs';
 import { applyModelMapping, validateModelForRole, NARU_DEFAULT_MODELS } from './model-manager.mjs';
+import { discoverMCPServers, fileExists } from './smart-discovery.mjs';
+
+const execAsync = promisify(exec);
 
 /**
  * Execute smart automated installation
@@ -71,6 +76,32 @@ export async function runSmartInstaller(options = {}) {
     for (const [mcp, msg] of Object.entries(mcpSummary)) {
       console.log(`   - ${mcp.padEnd(20)}: ${msg}`);
     }
+  }
+
+  // Step 4.5: Self-Healing — CodeGraph Index (per-project)
+  if (!options.dryRun) {
+    try {
+      const mcp = await discoverMCPServers();
+      if (mcp.codegraph?.available && mcp.codegraph?.needsInit) {
+        console.log('\n🔧 Self-Healing: CodeGraph binary found but index missing → running `codegraph init`...');
+        try {
+          const { stdout } = await execAsync('codegraph init 2>&1');
+          if (stdout.includes('Indexed')) {
+            console.log(`   ✓ CodeGraph indexed (${stdout.match(/Indexed \d+ files/)?.[0] || 'ready'})`);
+          } else {
+            console.log(`   ✓ ${stdout.trim().split('\n').pop()}`);
+          }
+        } catch (e) {
+          console.log(`   ⚠ Auto-init failed: ${e.message} — run manually: codegraph init`);
+        }
+      } else if (mcp.codegraph?.available && mcp.codegraph?.indexReady) {
+        console.log('\n✓ CodeGraph index already ready');
+      }
+      // Context7 degraded hint (no hard fail — fallback active)
+      if (mcp.context7?.needsKey) {
+        console.log('\nℹ️  Context7: No ctx7sk key detected — docs will fallback to webfetch. Set CONTEXT7_API_KEY for full grounding.');
+      }
+    } catch {}
   }
 
   // Step 5: Run Doctor Diagnostic
