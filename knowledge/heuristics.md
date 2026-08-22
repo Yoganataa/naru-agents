@@ -32,3 +32,13 @@
 - **Verified Date**: 2026-08-20
 - **Status**: VERIFIED
 - **Confidence**: High
+
+## Heuristic: H-004 (Autonomous Multi-Language Guardrail Self-Reflexion)
+- **Trigger**: Whenever subagents attempt code modifications or AST manipulations across TypeScript, Python, or Go.
+- **Action**: Enforce hard runtime gate verification via @opencode-ai/plugin and require formal issue tracking ticket for any suppress/skip directive.
+- **Evidence**: Reflexion Loop (NeurIPS 2023) & MetaGPT SOP Synthesis.
+- **Source**: `https://arxiv.org/abs/2303.11366`
+- **Source Type**: paper
+- **Verified Date**: 2026-08-22
+- **Status**: VERIFIED
+- **Confidence**: High

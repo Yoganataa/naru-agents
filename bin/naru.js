@@ -171,6 +171,22 @@ switch (args.command) {
     await runSelfUpdate();
     break;
 
+  case 'audit':
+    const { runSelfAuditCLI } = await import('../src/self-auditor.mjs');
+    await runSelfAuditCLI();
+    break;
+
+  case 'eval':
+  case 'test:agents':
+    const { runSelfEvaluationCLI } = await import('../src/self-evaluator.mjs');
+    await runSelfEvaluationCLI();
+    break;
+
+  case 'evolve':
+    const { runSelfEvolutionCLI } = await import('../src/self-evolver.mjs');
+    await runSelfEvolutionCLI();
+    break;
+
   case 'help':
   case '--help':
   case '-h':
@@ -202,6 +218,9 @@ Commands:
   mcp                 Unified MCP manager (opentui TUI) — no args = TUI, status/set/validate/init
   models              Manage AI models, check role compatibility & inspect OpenCode models
   doctor              Health check & diagnostic for runtimes, agents & MCPs
+  audit               Autonomous Self-Audit: scan subagents, permission boundaries & guardrails
+  eval, test:agents   Adversarial Self-Testing: simulate 12 bypass attacks & measure resilience
+  evolve              Reflexion Evolution: distill new heuristics into institutional memory
   update, upgrade     Auto-upgrade global package and re-sync OpenCode agents & MCPs
   install             Install agents to opencode config
   uninstall           Remove installed agents

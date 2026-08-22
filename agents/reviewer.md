@@ -72,12 +72,16 @@ You receive:
 - Query `codebase-memory-mcp` to cross-check against known past bug anti-patterns.
 
 ### Step 3: Multi-Language No-Bypass Code Scan
-Scan all modified files based on language extension:
-- **TypeScript / JS**: Scan for untracked `@ts-ignore`, `@ts-expect-error`, empty `catch {}`, or `.skip()`.
-- **Python**: Scan for blanket `# noqa`, `# type: ignore`, `except: pass`, or unlinked `@pytest.mark.skip`.
-- **Go**: Scan for `_ = err`, unhandled errors, empty `if err != nil {}`, or unlinked `t.Skip()`.
-- **Rust**: Scan for unchecked `.unwrap()`, blanket `#[allow(...)]`, or unlinked `#[ignore]`.
-- **Java / Kotlin**: Scan for empty catch blocks, unchecked `Optional.get()`, or unlinked `@Disabled`.
+
+You MUST audit and verify that candidate code complies with the following No-Bypass Matrix across all languages:
+
+| Violation Category | TypeScript / JavaScript | Python | Go | Rust | Java / Kotlin |
+|---|---|---|---|---|---|
+| **Suppress Lint / Type** | `@ts-ignore`, `@ts-expect-error` without ticket | `# type: ignore`, `# noqa` blanket | `//nolint` without reason + ticket | `#[allow(...)]` blanket | `@SuppressWarnings` blanket |
+| **Silent Error Swallow**| `catch {}` empty, `.catch(()=>{})` | `except: pass`, `except Exception: pass` | `if err != nil {}` empty, `_ = err` | `let _ = res;` on fallible Result | `catch (Exception e) {}` empty |
+| **Unsafe Unwrap** | Non-null `!` to silence errors | Dict access without `.get()`/try | Ignoring error return value | `.unwrap()` / `.expect()` on production paths | `Optional.get()` without `isPresent()` |
+| **Skip / Disable Test** | `.skip()`, `xit()`, `test.todo()` | `@pytest.mark.skip`, `unittest.skip` | `t.Skip()` without reason + ticket | `#[ignore]` without ticket | `@Disabled` without ticket |
+| **Untracked Workaround**| `// TODO` / `// FIXME` without ticket link | `# FIXME` without ticket link | `// TODO` without ticket link | `// TODO` without ticket link | `// TODO` without ticket link |
 
 *Any violation without an explicit issue link and technical justification is marked as a **Critical Issue (Must Fix)**.*
 

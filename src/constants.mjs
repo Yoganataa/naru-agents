@@ -7,6 +7,20 @@ export const APP_NAME = 'N.A.R.U.';
 export const APP_FULL_NAME = 'Next-gen Autonomous Role-based Unified agents';
 export const REPO_SLUG = 'yoganataa/naru-agents';
 
+export const AGENT_FILES = [
+  'architect.md',
+  'dependency.md',
+  'deploy.md',
+  'developer.md',
+  'docs.md',
+  'hotfix.md',
+  'naru.md',
+  'pm.md',
+  'qa.md',
+  'researcher.md',
+  'reviewer.md',
+];
+
 /**
  * Standardized banner configuration presets for all CLI modules
  */
@@ -22,6 +36,18 @@ export const BANNER_PRESETS = {
   doctor: {
     system: `${APP_NAME} — Smart Doctor Diagnostic & Health Audit (v${VERSION})`,
     commands: 'opencode agent list | opencode mcp list',
+  },
+  audit: {
+    system: `${APP_NAME} — Autonomous Self-Audit & Gap Scanner (v${VERSION})`,
+    commands: 'naru audit | naru eval | naru doctor',
+  },
+  eval: {
+    system: `${APP_NAME} — Adversarial Self-Testing & Resilience Benchmark (v${VERSION})`,
+    commands: 'naru eval | naru evolve | naru audit',
+  },
+  evolve: {
+    system: `${APP_NAME} — Reflexion Loop & Dynamic Knowledge Evolution (v${VERSION})`,
+    commands: 'naru evolve | naru doctor | opencode',
   },
   update: {
     system: `${APP_NAME} — Auto-Update & Self-Upgrade Engine (v${VERSION})`,
