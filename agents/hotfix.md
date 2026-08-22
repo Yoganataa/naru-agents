@@ -1,5 +1,5 @@
 ---
-name: hotfix-agent
+name: hotfix
 description: "Hotfix Agent - resolves live production incidents under strict No-Bypass policy. Identifies root-cause, reproduces via regression tests, applies targeted non-breaking patches, and verifies regression safety."
 mode: subagent
 hidden: true

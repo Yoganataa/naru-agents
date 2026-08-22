@@ -7,8 +7,8 @@ import { promisify } from 'node:util';
 import { readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
-import { findInPath, fileExists } from './smart-discovery.mjs';
-import { runSmartInstaller } from './smart-installer.mjs';
+import { findInPath, fileExists } from './discovery.mjs';
+import { runSmartInstaller } from './setup.mjs';
 import { printBanner } from './banner.mjs';
 
 const execAsync = promisify(exec);

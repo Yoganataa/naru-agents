@@ -15,16 +15,16 @@ const ROOT_DIR = join(__dirname, '..');
 // Agent files to install
 const AGENT_FILES = [
   'naru.md',
-  'pm-agent.md',
-  'researcher-agent.md',
-  'dependency-agent.md',
-  'architect-agent.md',
-  'developer-agent.md',
-  'reviewer-agent.md',
-  'qa-agent.md',
-  'docs-agent.md',
-  'deploy-agent.md',
-  'hotfix-agent.md',
+  'pm.md',
+  'researcher.md',
+  'dependency.md',
+  'architect.md',
+  'developer.md',
+  'reviewer.md',
+  'qa.md',
+  'docs.md',
+  'deploy.md',
+  'hotfix.md',
 ];
 
 // Knowledge files to install

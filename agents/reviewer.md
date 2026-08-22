@@ -1,5 +1,5 @@
 ---
-name: reviewer-agent
+name: reviewer
 description: "Reviewer Agent - performs rigorous independent code review, security audits, goal drift detection, and multi-language No-Bypass compliance verification. Output becomes input for qa-agent."
 mode: subagent
 hidden: true

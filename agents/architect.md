@@ -1,5 +1,5 @@
 ---
-name: architect-agent
+name: architect
 description: "Architect Agent - receives PRD, Research Findings, and Dependency Contracts. Produces System Design, Architecture Decision Records (ADRs), Task Breakdown, API Contracts, and Goal Traceability Matrix. Output becomes input for developer-agent."
 mode: subagent
 hidden: true

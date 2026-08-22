@@ -42,7 +42,7 @@ switch (args.command) {
     break;
 
   case 'setup':
-    const { runSmartInstaller } = await import('../src/smart-installer.mjs');
+    const { runSmartInstaller } = await import('../src/setup.mjs');
     await runSmartInstaller({
       withMcp: args.withMcp,
       force: args.force || args.auto,
@@ -140,7 +140,7 @@ switch (args.command) {
     break;
 
   case 'mcp':
-    const { runMcpCLI } = await import('../src/mcp-manager.mjs');
+    const { runMcpCLI } = await import('../src/mcp/manager.mjs');
     await runMcpCLI(process.argv.slice(3));
     break;
 

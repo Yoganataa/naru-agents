@@ -3,8 +3,8 @@
 // Vibe: no spam commands, one TUI to rule all 6 MCPs
 // ──────────────────────────────────────────────────────────────────────────────
 
-import { discoverMCPServers } from '../smart-discovery.mjs';
-import { getContext7Key, setContext7Key, validateKeyFormat, probeContext7Key, maskKey } from '../context7-manager.mjs';
+import { discoverMCPServers } from '../../discovery.mjs';
+import { getContext7Key, setContext7Key, validateKeyFormat, probeContext7Key, maskKey } from '../../mcp/context7.mjs';
 
 let renderer = null;
 
@@ -39,7 +39,7 @@ export async function launchMcpTui() {
     if (!createCliRenderer || !BoxRenderable || !TextRenderable) throw new Error('opentui core missing exports');
   } catch (e) {
     console.error(`\x1b[33m⚠ @opentui/core not available (${e.message}) — falling back to CLI status\x1b[0m\n`);
-    const { runMcpCLI } = await import('../mcp-manager.mjs');
+    const { runMcpCLI } = await import('../../mcp/manager.mjs');
     await runMcpCLI(['status']);
     return;
   }

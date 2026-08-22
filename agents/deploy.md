@@ -1,5 +1,5 @@
 ---
-name: deploy-agent
+name: deploy
 description: "Deploy Agent - handles platform-specific deployment configs and execution for Web (Vercel/Cloudflare/Heroku/VPS), Mobile (EAS/Fastlane), Desktop (Electron/Tauri), and Bot (Railway/VPS). ALL non-git bash commands require explicit user approval (ask)."
 mode: subagent
 hidden: true

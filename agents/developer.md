@@ -1,5 +1,5 @@
 ---
-name: developer-agent
+name: developer
 description: "Developer Agent - receives Architecture Design, PRD, and Dependency Contracts. Implements clean, production-ready code under a strict multi-language No-Bypass policy. Creates automated unit tests, executes builds, and commits milestones. Output becomes input for reviewer-agent."
 mode: subagent
 hidden: true

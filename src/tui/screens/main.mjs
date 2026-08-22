@@ -3,8 +3,8 @@
 // Replaces src/tui/index.mjs custom ANSI renderer with opentui (same as opencode)
 // ──────────────────────────────────────────────────────────────────────────────
 
-import { installAgents } from '../installer.mjs';
-import { AGENTS } from './state.mjs';
+import { installAgents } from '../../installer.mjs';
+import { AGENTS } from '../state.mjs';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
 
@@ -31,11 +31,8 @@ export async function launchMainTui(options = {}) {
     TextRenderable = core.TextRenderable;
     if (!createCliRenderer) throw new Error('missing createCliRenderer');
   } catch (e) {
-    // Fallback to legacy custom TUI if opentui not available
-    console.error(`\x1b[33m⚠ @opentui/core not available (${e.message}) — falling back to legacy TUI\x1b[0m`);
-    const { launchTUI } = await import('./index-legacy.mjs');
-    await launchTUI(options);
-    return;
+    console.error(`\x1b[31m✗ @opentui/core not available: ${e.message}\x1b[0m`);
+    process.exit(1);
   }
 
   // State (reuse AGENTS from state.mjs but manage locally for opentui)

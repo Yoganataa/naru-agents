@@ -9,10 +9,10 @@ import { join } from 'node:path';
 import { homedir } from 'node:os';
 import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
-import { fileExists, discoverMCPServers } from './smart-discovery.mjs';
-import { printBanner } from './banner.mjs';
-import { maskKey, validateKeyFormat, probeContext7Key, setContext7Key, removeContext7Key, getContext7Key } from './context7-manager.mjs';
-import { getMcpHealthReport, formatMcpReport } from './mcp-health.mjs';
+import { fileExists, discoverMCPServers } from '../discovery.mjs';
+import { printBanner } from '../banner.mjs';
+import { maskKey, validateKeyFormat, probeContext7Key, setContext7Key, removeContext7Key, getContext7Key } from './context7.mjs';
+import { getMcpHealthReport, formatMcpReport } from './health.mjs';
 
 const execAsync = promisify(exec);
 
@@ -247,7 +247,7 @@ export async function runMcpCLI(rawArgs = []) {
   // `naru mcp` (no args) → opentui TUI (vibe) — fallback to CLI status if not TTY
   if (args.length === 0) {
     if (process.stdin.isTTY) {
-      const { launchMcpTui } = await import('./tui/mcp-opentui.mjs');
+      const { launchMcpTui } = await import('../tui/screens/mcp.mjs');
       await launchMcpTui();
       return;
     }

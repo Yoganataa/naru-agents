@@ -4,11 +4,11 @@ import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
 import { install } from './installer.mjs';
 import { createBackup } from './backup-manager.mjs';
-import { configureMCPServers } from './mcp-configurator.mjs';
+import { configureMCPServers } from './mcp/configurator.mjs';
 import { runDoctor } from './doctor.mjs';
 import { printBanner } from './banner.mjs';
 import { applyModelMapping, validateModelForRole, NARU_DEFAULT_MODELS } from './model-manager.mjs';
-import { discoverMCPServers, fileExists } from './smart-discovery.mjs';
+import { discoverMCPServers, fileExists } from './discovery.mjs';
 
 const execAsync = promisify(exec);
 

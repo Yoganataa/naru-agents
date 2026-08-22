@@ -5,12 +5,10 @@
 
 export async function launchTUI(options = {}) {
   try {
-    const { launchMainTui } = await import('./main-opentui.mjs');
+    const { launchMainTui } = await import('./screens/main.mjs');
     await launchMainTui(options);
   } catch (e) {
-    // Fallback to legacy custom TUI
-    console.error(`\x1b[33m⚠ opentui failed (${e.message}) — falling back to legacy TUI\x1b[0m`);
-    const { launchTUI: launchLegacy } = await import('./index-legacy.mjs');
-    await launchLegacy(options);
+    console.error(`\x1b[31m✗ TUI failed: ${e.message}\x1b[0m`);
+    process.exit(1);
   }
 }

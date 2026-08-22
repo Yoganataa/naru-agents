@@ -4,8 +4,8 @@
   "description": "N.A.R.U. - Next-gen Autonomous Role-based Unified agents orchestration for OpenCode with 10 role-based subagents and RAG grounding",
   "type": "module",
   "bin": {
-    "naru": "./bin/naru-agents.js",
-    "naru-agents": "./bin/naru-agents.js"
+    "naru": "./bin/naru.js",
+    "naru-agents": "./bin/naru.js"
   },
   "engines": {
     "node": ">=18.0.0",
@@ -19,11 +19,11 @@
     "install.sh"
   ],
   "scripts": {
-    "test": "node bin/naru-agents.js validate",
+    "test": "node bin/naru.js validate",
     "docs:preview": "node src/docs-preview.mjs",
     "build:plugin": "bun build ./src/plugin/index.ts --outfile ./dist/naru-plugin.js --target=node --format=esm",
-    "build:bin": "bun build --compile --minify ./bin/naru-agents.js --outfile ./dist/naru.exe",
-    "build:all": "bun build --compile --minify ./bin/naru-agents.js --target=bun-windows-x64 --outfile=./dist/naru-windows.exe && bun build --compile --minify ./bin/naru-agents.js --target=bun-linux-x64 --outfile=./dist/naru-linux && bun build --compile --minify ./bin/naru-agents.js --target=bun-darwin-arm64 --outfile=./dist/naru-macos"
+    "build:bin": "bun build --compile --minify ./bin/naru.js --outfile ./dist/naru.exe",
+    "build:all": "bun build --compile --minify ./bin/naru.js --target=bun-windows-x64 --outfile=./dist/naru-windows.exe && bun build --compile --minify ./bin/naru.js --target=bun-linux-x64 --outfile=./dist/naru-linux && bun build --compile --minify ./bin/naru.js --target=bun-darwin-arm64 --outfile=./dist/naru-macos"
   },
   "keywords": [
     "opencode",

@@ -7,8 +7,8 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
-import { fileExists } from './smart-discovery.mjs';
-import { printBanner } from './banner.mjs';
+import { fileExists } from '../discovery.mjs';
+import { printBanner } from '../banner.mjs';
 
 const CONTEXT7_KEY_PREFIX = 'ctx7sk_';
 const CONTEXT7_KEY_REGEX = /^ctx7sk_[A-Za-z0-9_-]{20,}$/;
@@ -231,7 +231,7 @@ export async function runContext7CLI(rawArgs = []) {
       console.log(`  Format: ${fmt.valid ? `${C.green}✓ valid${C.reset}` : `${C.yellow}⚠ ${fmt.reason}${C.reset}`}`);
     }
     // Also show smart-discovery view
-    const { discoverMCPServers } = await import('./smart-discovery.mjs');
+    const { discoverMCPServers } = await import('../discovery.mjs');
     const mcp = await discoverMCPServers();
     console.log(`\n  MCP: ${mcp.context7.source}\n`);
   }

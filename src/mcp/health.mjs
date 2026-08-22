@@ -3,8 +3,8 @@
 // Used by: naru (pre-flight), doctor, mcp-manager, gate-enforcer
 // ──────────────────────────────────────────────────────────────────────────────
 
-import { discoverMCPServers } from './smart-discovery.mjs';
-import { getContext7Key } from './context7-manager.mjs';
+import { discoverMCPServers } from '../discovery.mjs';
+import { getContext7Key } from './context7.mjs';
 
 /**
  * Severity for MCP issue

@@ -1,5 +1,5 @@
 ---
-name: pm-agent
+name: pm
 description: "PM Agent - translates user goals into measurable PRDs, user stories, acceptance criteria, and immutable goal baselines with version metadata. Artifact output becomes input for researcher-agent."
 mode: subagent
 hidden: true

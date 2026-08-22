@@ -6,7 +6,7 @@ import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
-import { detectOS, detectPackageManagers, discoverMCPServers, fileExists } from './smart-discovery.mjs';
+import { detectOS, detectPackageManagers, discoverMCPServers, fileExists } from './discovery.mjs';
 import { printBanner } from './banner.mjs';
 import { VERSION } from './constants.mjs';
 import { discoverOpenCodeModels, readAgentModels, validateModelForRole } from './model-manager.mjs';
@@ -124,7 +124,7 @@ export async function runDoctor() {
   console.log('');
 
   // 5. MCP Servers Discovery & Status (via mcp-health.mjs — proactive reminder)
-  const { getMcpHealthReport, formatMcpReport } = await import('./mcp-health.mjs');
+  const { getMcpHealthReport, formatMcpReport } = await import('./mcp/health.mjs');
   const health = await getMcpHealthReport();
   const mcpDiscovery = health.mcp;
   console.log(`${C.bold}4. MCP Servers Health Status (${Object.keys(mcpDiscovery).length} Discovered Servers):${C.reset}`);

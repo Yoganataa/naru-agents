@@ -1,5 +1,5 @@
 ---
-name: qa-agent
+name: qa
 description: "QA Agent - executes comprehensive functional, integration, platform-specific, and multimodal visual regression testing. Conducts security audits and production readiness sign-offs. Output is final artifact before Docs & Deployment."
 mode: subagent
 hidden: true

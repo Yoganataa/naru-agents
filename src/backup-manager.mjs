@@ -4,7 +4,7 @@
 
 import { readdir, mkdir, copyFile, rm } from 'node:fs/promises';
 import { join } from 'node:path';
-import { fileExists } from './smart-discovery.mjs';
+import { fileExists } from './discovery.mjs';
 
 /**
  * Copy directory recursively

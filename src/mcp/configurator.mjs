@@ -4,7 +4,7 @@
 
 import { readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { fileExists, discoverMCPServers } from './smart-discovery.mjs';
+import { fileExists, discoverMCPServers } from '../discovery.mjs';
 
 /**
  * Configure all 5 MCP servers in opencode.json safely without losing custom keys

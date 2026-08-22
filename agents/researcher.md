@@ -1,5 +1,5 @@
 ---
-name: researcher-agent
+name: researcher
 description: "Researcher Agent - conducts evidence-based technology research with strict RAG grounding, peer-reviewed/official documentation sourcing, and explicit Knowledge Gap declarations. Output becomes input for dependency-agent."
 mode: subagent
 hidden: true

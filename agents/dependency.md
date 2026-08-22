@@ -1,5 +1,5 @@
 ---
-name: dependency-agent
+name: dependency
 description: "Dependency Validator - verifies behavioral contracts of recommended libraries against exact release documentation and existing stack. Produces Dependency Contract Report."
 mode: subagent
 hidden: true

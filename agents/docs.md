@@ -1,5 +1,5 @@
 ---
-name: docs-agent
+name: docs
 description: "Documentation Agent - auto-generates and maintains README, API docs (OpenAPI/AsyncAPI/Command Reference), CHANGELOG, ADRs, and deployment guides based on implementation and architecture artifacts."
 mode: subagent
 hidden: true
