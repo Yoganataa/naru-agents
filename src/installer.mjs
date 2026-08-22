@@ -145,7 +145,7 @@ export async function installAgents(targetDir, options = {}) {
   }
 
   // Install TypeScript Guardrail Plugin
-  const pluginDir = join(targetDir, 'plugin');
+  const pluginDir = join(targetDir, 'plugins');
   await mkdir(pluginDir, { recursive: true });
   const pluginDest = join(pluginDir, 'naru.js');
   const fallbackPluginSrc = join(ROOT_DIR, 'dist', 'naru-plugin.js');
@@ -221,6 +221,13 @@ export async function uninstallAgents(targetDir, options = {}) {
     } else {
       notFound++;
     }
+  }
+
+  // Remove TypeScript Guardrail Plugin
+  const pluginDest = join(targetDir, 'plugins', 'naru.js');
+  if (await fileExists(pluginDest)) {
+    await rm(pluginDest);
+    removed++;
   }
 
   return { removed, notFound };

@@ -121,6 +121,10 @@ export async function runDoctor() {
     console.log(`   - Gate 1 SOP (Plan)  : [${gateIcon}] — ${gate.reason}`);
     if (!gate.approved) console.log(`     ${C.dim}→ Run: naru plan → question Approve → Gate 1 PASS required before edits${C.reset}`);
   } catch {}
+
+  // 3.6 TypeScript Plugin Guardrails
+  const pluginInstalled = await fileExists(join(globalDir, 'plugins', 'naru.js'));
+  console.log(`   - TypeScript Plugin  : ${pluginInstalled ? `${C.green}✓ Installed & Active (~/.config/opencode/plugins/naru.js)${C.reset}` : `${C.yellow}⚠ Not Installed (Run "naru setup --auto")${C.reset}`}`);
   console.log('');
 
   // 5. MCP Servers Discovery & Status (via mcp-health.mjs — proactive reminder)
