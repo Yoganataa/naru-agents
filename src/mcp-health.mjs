@@ -1,6 +1,6 @@
 // ─── mcp-health.mjs ── MCP Health Reporter (Naru Proactive Reminder) ───────
-// Jika 1 MCP tidak berfungsi, Naru WAJIB ingatkan user + kasih laporan bagian mana yang harus diperbaiki
-// Dipakai oleh: naru (pre-flight), doctor, mcp-manager, gate-enforcer
+// If any MCP server is degraded/missing, Naru proactively reminds the user with actionable diagnostics
+// Used by: naru (pre-flight), doctor, mcp-manager, gate-enforcer
 // ──────────────────────────────────────────────────────────────────────────────
 
 import { discoverMCPServers } from './smart-discovery.mjs';
@@ -25,19 +25,19 @@ export async function getMcpHealthReport(cwd = process.cwd()) {
     issues.push({
       mcp: 'context7',
       severity: 'warning',
-      title: 'Context7 API key belum di-set',
-      detail: 'MCP context7 ter-install tapi tanpa ctx7sk_ key → researcher & dependency akan fallback ke webfetch (degraded, tidak bisa fetch versi exact dari registry).',
-      fix: 'Set key via TUI atau CLI',
-      fixCmd: 'naru mcp              # pilih context7 → Enter → paste ctx7sk_...\n  atau: naru mcp set context7 ctx7sk_...',
+      title: 'Context7 API key not configured',
+      detail: 'MCP context7 is configured without a ctx7sk_ key -> researcher & dependency will fallback to webfetch (degraded, cannot fetch exact registry versions).',
+      fix: 'Set key via TUI or CLI',
+      fixCmd: 'naru mcp              # select context7 -> Enter -> paste ctx7sk_...\n  or: naru mcp set context7 ctx7sk_...',
     });
   }
   if (!mcp.context7?.available) {
     issues.push({
       mcp: 'context7',
       severity: 'critical',
-      title: 'Context7 MCP tidak tersedia',
-      detail: 'Remote https://mcp.context7.com/mcp tidak terjangkau (network / config opencode.json hilang).',
-      fix: 'Cek opencode.json mcp.context7.url',
+      title: 'Context7 MCP unavailable',
+      detail: 'Remote https://mcp.context7.com/mcp is unreachable (network error or missing opencode.json config).',
+      fix: 'Verify opencode.json mcp.context7.url',
       fixCmd: 'naru mcp status',
     });
   }
@@ -47,19 +47,19 @@ export async function getMcpHealthReport(cwd = process.cwd()) {
     issues.push({
       mcp: 'codegraph',
       severity: 'warning',
-      title: 'CodeGraph ter-install tapi index belum dibuat',
-      detail: `Binary ditemukan di ${mcp.codegraph.source} tapi .codegraph/codegraph.db belum ada → codegraph_explore & blast-radius tidak jalan.`,
-      fix: 'Init index (877ms)',
-      fixCmd: 'naru mcp init codegraph   # atau: codegraph init / naru init',
+      title: 'CodeGraph installed but index not initialized',
+      detail: `Binary found at ${mcp.codegraph.source} but .codegraph/codegraph.db does not exist -> codegraph_explore & blast-radius unavailable.`,
+      fix: 'Initialize index (877ms)',
+      fixCmd: 'naru mcp init codegraph   # or: codegraph init / naru init',
     });
   }
   if (!mcp.codegraph?.available) {
     issues.push({
       mcp: 'codegraph',
       severity: 'critical',
-      title: 'CodeGraph belum ter-install',
-      detail: 'Binary codegraph tidak ada di PATH → impact analysis & call-graph tidak jalan.',
-      fix: 'Install global',
+      title: 'CodeGraph not installed',
+      detail: 'Binary codegraph not found in PATH -> impact analysis & call-graph unavailable.',
+      fix: 'Install globally',
       fixCmd: 'npm install -g codegraph  /  bun add -g codegraph',
     });
   }
@@ -69,10 +69,10 @@ export async function getMcpHealthReport(cwd = process.cwd()) {
     issues.push({
       mcp: 'serena',
       severity: 'warning',
-      title: 'Serena LSP tidak tersedia',
-      detail: 'Binary serena tidak ada → find_symbol & LSP tidak jalan, fallback ke grep.',
+      title: 'Serena LSP unavailable',
+      detail: 'Binary serena not found -> find_symbol & LSP unavailable, falling back to ripgrep.',
       fix: 'Install serena',
-      fixCmd: 'pip install serena-agent  atau  cek https://github.com/oraios/serena',
+      fixCmd: 'pip install serena-agent  or  check https://github.com/oraios/serena',
     });
   }
 
@@ -81,8 +81,8 @@ export async function getMcpHealthReport(cwd = process.cwd()) {
     issues.push({
       mcp: 'lean-ctx',
       severity: 'warning',
-      title: 'lean-ctx tidak tersedia',
-      detail: 'Binary lean-ctx tidak ada → ctx_compose & token compaction tidak jalan.',
+      title: 'lean-ctx unavailable',
+      detail: 'Binary lean-ctx not found -> ctx_compose & token compaction unavailable.',
       fix: 'Install via cargo',
       fixCmd: 'cargo install lean-ctx',
     });
@@ -93,10 +93,10 @@ export async function getMcpHealthReport(cwd = process.cwd()) {
     issues.push({
       mcp: 'codebase-memory-mcp',
       severity: 'critical',
-      title: 'codebase-memory-mcp tidak tersedia',
-      detail: 'Binary tidak ada → knowledge graph persistent tidak jalan, research grounding lemah.',
-      fix: 'Install dari release',
-      fixCmd: 'Cek https://github.com/DeusData/codebase-memory-mcp/releases',
+      title: 'codebase-memory-mcp unavailable',
+      detail: 'Binary not found -> persistent knowledge graph unavailable, research grounding degraded.',
+      fix: 'Install from official release',
+      fixCmd: 'Check https://github.com/DeusData/codebase-memory-mcp/releases',
     });
   }
 
@@ -105,8 +105,8 @@ export async function getMcpHealthReport(cwd = process.cwd()) {
 
   const healthy = issues.length === 0;
   const summary = healthy
-    ? '✅ Semua 5 MCP inti healthy — siap full pipeline'
-    : `⚠️ ${issues.length} MCP bermasalah — Naru akan ingatkan & kasih laporan perbaikan`;
+    ? '✅ All 5 core MCP servers healthy — ready for full pipeline'
+    : `⚠️ ${issues.length} MCP issue(s) detected — Naru proactive diagnostic reminder`;
 
   return { healthy, issues, summary, mcp };
 }
@@ -122,11 +122,11 @@ export function formatMcpReport(report) {
   out += `${report.summary}\n`;
 
   if (report.healthy) {
-    out += `${C.green}  ✓ context7, serena, codegraph, lean-ctx, codebase-memory-mcp — semua OK${C.reset}\n`;
+    out += `${C.green}  ✓ context7, serena, codegraph, lean-ctx, codebase-memory-mcp — all OK${C.reset}\n`;
     return out;
   }
 
-  out += `\n${C.yellow}Bagian yang harus diperbaiki:${C.reset}\n`;
+  out += `\n${C.yellow}Actionable Remediation Items:${C.reset}\n`;
   report.issues.forEach((iss, idx) => {
     const icon = iss.severity === 'critical' ? `${C.red}✗ CRITICAL${C.reset}` : `${C.yellow}⚠ WARNING${C.reset}`;
     out += `\n  ${idx + 1}. [${icon}] ${C.bold}${iss.mcp}${C.reset} — ${iss.title}\n`;
@@ -135,7 +135,7 @@ export function formatMcpReport(report) {
     out += `     ${C.dim}Cmd: ${iss.fixCmd}${C.reset}\n`;
   });
 
-  out += `\n${C.dim}Tip: Jalankan fix di atas, lalu: naru mcp validate  atau  naru doctor${C.reset}\n`;
+  out += `\n${C.dim}Tip: Run the remediation above, then: naru mcp validate  or  naru doctor${C.reset}\n`;
   return out;
 }
 

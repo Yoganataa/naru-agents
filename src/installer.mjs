@@ -6,7 +6,7 @@ import { copyFile, writeFile, mkdir, rm, access } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { homedir } from 'node:os';
-import { EMBEDDED_AGENTS, EMBEDDED_KNOWLEDGE } from './embedded-assets.mjs';
+import { EMBEDDED_AGENTS, EMBEDDED_KNOWLEDGE, EMBEDDED_PLUGIN } from './embedded-assets.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -143,6 +143,15 @@ export async function installAgents(targetDir, options = {}) {
     if (result.copied) installed++;
     if (result.skipped) skipped++;
   }
+
+  // Install TypeScript Guardrail Plugin
+  const pluginDir = join(targetDir, 'plugin');
+  await mkdir(pluginDir, { recursive: true });
+  const pluginDest = join(pluginDir, 'naru.js');
+  const fallbackPluginSrc = join(ROOT_DIR, 'dist', 'naru-plugin.js');
+  const pluginResult = await writeAssetWithCheck('naru.js', EMBEDDED_PLUGIN, fallbackPluginSrc, pluginDest, force);
+  if (pluginResult.copied) installed++;
+  if (pluginResult.skipped) skipped++;
 
   // Initialize sessions/latest.json pointer if not present
   const latestJsonPath = join(sessionsDir, 'latest.json');

@@ -72,13 +72,13 @@ You operate under a strict **Multi-Language No-Bypass Policy**. You never mask d
 
 You MUST ensure your code complies with the following rules across all project languages:
 
-| Kategori Pelanggaran | TypeScript / JavaScript | Python | Go | Rust | Java / Kotlin |
+| Violation Category | TypeScript / JavaScript | Python | Go | Rust | Java / Kotlin |
 |---|---|---|---|---|---|
-| **Suppress Lint / Type** | `@ts-ignore`, `@ts-expect-error` tanpa tiket | `# type: ignore`, `# noqa` blanket | `//nolint` tanpa alasan + tiket | `#[allow(...)]` blanket | `@SuppressWarnings` blanket |
-| **Silent Error Swallow**| `catch {}` kosong, `.catch(()=>{})` | `except: pass`, `except Exception: pass` | `if err != nil {}` kosong, `_ = err` | `let _ = res;` pada fallible Result | `catch (Exception e) {}` kosong |
-| **Unsafe Unwrap** | Non-null `!` to silence errors | Akses dict tanpa `.get()`/try | Mengabaikan error return | `.unwrap()` / `.expect()` pada path produksi | `Optional.get()` tanpa `isPresent()` |
-| **Skip / Disable Test** | `.skip()`, `xit()`, `test.todo()` | `@pytest.mark.skip`, `unittest.skip` | `t.Skip()` tanpa alasan + tiket | `#[ignore]` tanpa tiket | `@Disabled` tanpa tiket |
-| **Untracked Workaround**| `// TODO` / `// FIXME` tanpa link tiket | `# FIXME` tanpa link tiket | `// TODO` tanpa link tiket | `// TODO` tanpa link tiket | `// TODO` tanpa link tiket |
+| **Suppress Lint / Type** | `@ts-ignore`, `@ts-expect-error` without ticket | `# type: ignore`, `# noqa` blanket | `//nolint` without reason + ticket | `#[allow(...)]` blanket | `@SuppressWarnings` blanket |
+| **Silent Error Swallow**| `catch {}` empty, `.catch(()=>{})` | `except: pass`, `except Exception: pass` | `if err != nil {}` empty, `_ = err` | `let _ = res;` on fallible Result | `catch (Exception e) {}` empty |
+| **Unsafe Unwrap** | Non-null `!` to silence errors | Dict access without `.get()`/try | Ignoring error return value | `.unwrap()` / `.expect()` on production paths | `Optional.get()` without `isPresent()` |
+| **Skip / Disable Test** | `.skip()`, `xit()`, `test.todo()` | `@pytest.mark.skip`, `unittest.skip` | `t.Skip()` without reason + ticket | `#[ignore]` without ticket | `@Disabled` without ticket |
+| **Untracked Workaround**| `// TODO` / `// FIXME` without ticket link | `# FIXME` without ticket link | `// TODO` without ticket link | `// TODO` without ticket link | `// TODO` without ticket link |
 
 *Rule: Any ignore, suppress, or skip MUST contain an explicit explanation comment AND a valid issue/ticket reference.*
 
