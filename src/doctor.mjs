@@ -76,9 +76,9 @@ export async function runDoctor() {
   // 3. Agent Files & Validation
   console.log(`${C.bold}3. Agent Definitions & AI Model Health (v${VERSION} - 11 Agents):${C.reset}`);
   const AGENT_FILES = [
-    'naru.md', 'pm-agent.md', 'researcher-agent.md', 'dependency-agent.md',
-    'architect-agent.md', 'developer-agent.md', 'reviewer-agent.md', 'qa-agent.md',
-    'docs-agent.md', 'deploy-agent.md', 'hotfix-agent.md',
+    'naru.md', 'pm.md', 'researcher.md', 'dependency.md',
+    'architect.md', 'developer.md', 'reviewer.md', 'qa.md',
+    'docs.md', 'deploy.md', 'hotfix.md',
   ];
 
   let installedCount = 0;

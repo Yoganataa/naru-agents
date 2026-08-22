@@ -16,16 +16,16 @@ const execAsync = promisify(exec);
  */
 export const NARU_DEFAULT_CONFIGS = {
   'naru.md': { model: 'opencode/muse-spark-1.2-contributor-free', variant: 'high' },
-  'pm-agent.md': { model: 'opencode/muse-spark-1.2-contributor-free', variant: 'xhigh' },
-  'architect-agent.md': { model: 'opencode/muse-spark-1.2-contributor-free', variant: 'xhigh' },
-  'developer-agent.md': { model: 'opencode/big-pickle' },
-  'hotfix-agent.md': { model: 'opencode/big-pickle' },
-  'reviewer-agent.md': { model: 'opencode/x-preview-f-free', variant: 'max' },
-  'qa-agent.md': { model: 'opencode/mimo-v2.5-free' },
-  'docs-agent.md': { model: 'opencode/nemotron-3-ultra-free' },
-  'researcher-agent.md': { model: 'opencode/hy3-free', variant: 'medium' },
-  'dependency-agent.md': { model: 'opencode/hy3-free', variant: 'low' },
-  'deploy-agent.md': { model: 'opencode/hy3-free', variant: 'low' },
+  'pm.md': { model: 'opencode/muse-spark-1.2-contributor-free', variant: 'xhigh' },
+  'architect.md': { model: 'opencode/muse-spark-1.2-contributor-free', variant: 'xhigh' },
+  'developer.md': { model: 'opencode/big-pickle' },
+  'hotfix.md': { model: 'opencode/big-pickle' },
+  'reviewer.md': { model: 'opencode/x-preview-f-free', variant: 'max' },
+  'qa.md': { model: 'opencode/mimo-v2.5-free' },
+  'docs.md': { model: 'opencode/nemotron-3-ultra-free' },
+  'researcher.md': { model: 'opencode/hy3-free', variant: 'medium' },
+  'dependency.md': { model: 'opencode/hy3-free', variant: 'low' },
+  'deploy.md': { model: 'opencode/hy3-free', variant: 'low' },
 };
 
 export const NARU_DEFAULT_MODELS = Object.fromEntries(
