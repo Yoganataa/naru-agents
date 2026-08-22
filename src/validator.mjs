@@ -138,6 +138,19 @@ export async function validate() {
   console.log(`  Valid: ${validCount}`);
   console.log(`  Invalid: ${invalidCount}`);
 
+  // Gate 1 SOP check (hard enforcement, not just prompt)
+  try {
+    const { checkGate1 } = await import('./gate-enforcer.mjs');
+    const gate = await checkGate1();
+    if (!gate.approved) {
+      console.log(`\n\x1b[33m⚠ Gate 1 SOP: ${gate.reason}\x1b[0m`);
+      console.log(`\x1b[2m  → Run: naru plan (creates plan-*.md) → question Approve → Gate 1 PASS required before developer edits\x1b[0m`);
+      console.log(`\x1b[2m  File: ${gate.gateFile}\x1b[0m`);
+    } else {
+      console.log(`\n\x1b[32m✓ Gate 1 SOP: ${gate.reason}\x1b[0m`);
+    }
+  } catch {}
+
   if (invalidCount > 0) {
     process.exit(1);
   }

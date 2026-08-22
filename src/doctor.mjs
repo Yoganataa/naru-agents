@@ -10,6 +10,7 @@ import { detectOS, detectPackageManagers, discoverMCPServers, fileExists } from 
 import { printBanner } from './banner.mjs';
 import { VERSION } from './constants.mjs';
 import { discoverOpenCodeModels, readAgentModels, validateModelForRole } from './model-manager.mjs';
+import { checkGate1 } from './gate-enforcer.mjs';
 
 const execAsync = promisify(exec);
 
@@ -111,10 +112,21 @@ export async function runDoctor() {
   }
   const sessionsExist = await fileExists(join(globalDir, 'knowledge', 'sessions', 'latest.json'));
   console.log(`   - RAG Knowledge Base : ${knowCount === 4 ? `${C.green}✓ 4/4 Stores Synchronized${C.reset}` : `${C.yellow}⚠ ${knowCount}/4 Stores Synchronized${C.reset}`}`);
-  console.log(`   - Session Memory     : ${sessionsExist ? `${C.green}✓ Initialized (.opencode/knowledge/sessions/)${C.reset}` : `${C.yellow}⚠ Not initialized${C.reset}`}\n`);
+  console.log(`   - Session Memory     : ${sessionsExist ? `${C.green}✓ Initialized (.opencode/knowledge/sessions/)${C.reset}` : `${C.yellow}⚠ Not initialized${C.reset}`}`);
 
-  // 5. MCP Servers Discovery & Status
-  const mcpDiscovery = await discoverMCPServers();
+  // 3.5 Gate 1 SOP (Plan Approval) — hard checkpointer
+  try {
+    const gate = await checkGate1(process.cwd());
+    const gateIcon = gate.approved ? `${C.green}✓ PASS${C.reset}` : `${C.yellow}⏸️ WAITING_FOR_APPROVAL${C.reset}`;
+    console.log(`   - Gate 1 SOP (Plan)  : [${gateIcon}] — ${gate.reason}`);
+    if (!gate.approved) console.log(`     ${C.dim}→ Run: naru plan → question Approve → Gate 1 PASS required before edits${C.reset}`);
+  } catch {}
+  console.log('');
+
+  // 5. MCP Servers Discovery & Status (via mcp-health.mjs — proactive reminder)
+  const { getMcpHealthReport, formatMcpReport } = await import('./mcp-health.mjs');
+  const health = await getMcpHealthReport();
+  const mcpDiscovery = health.mcp;
   console.log(`${C.bold}4. MCP Servers Health Status (${Object.keys(mcpDiscovery).length} Discovered Servers):${C.reset}`);
 
   for (const [name, info] of Object.entries(mcpDiscovery)) {
@@ -129,6 +141,10 @@ export async function runDoctor() {
       statusIcon = `${C.green}✓ AVAILABLE${C.reset}`;
     }
     console.log(`   - ${C.bold}${name.padEnd(20)}${C.reset} : [${statusIcon}] - ${info.source || 'Binary not found in PATH'}`);
+  }
+  // Proactive detailed report (Naru reminder)
+  if (!health.healthy) {
+    console.log(formatMcpReport(health));
   }
 
   // 6. Actionable Recommendations (including self-healing for degraded states)

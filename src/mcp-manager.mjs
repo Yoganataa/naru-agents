@@ -12,6 +12,7 @@ import { promisify } from 'node:util';
 import { fileExists, discoverMCPServers } from './smart-discovery.mjs';
 import { printBanner } from './banner.mjs';
 import { maskKey, validateKeyFormat, probeContext7Key, setContext7Key, removeContext7Key, getContext7Key } from './context7-manager.mjs';
+import { getMcpHealthReport, formatMcpReport } from './mcp-health.mjs';
 
 const execAsync = promisify(exec);
 
@@ -58,7 +59,17 @@ async function showStatus() {
   // Context7 key detail (masked)
   const { key, source } = await getContext7Key();
   console.log(`\n${C.bold}Context7 Key:${C.reset} ${key ? `${C.green}${maskKey(key)}${C.reset} (${source})` : `${C.yellow}not set — fallback to webfetch${C.reset}`}`);
-  console.log(`${C.dim}  Set: naru mcp set context7 ctx7sk_...  |  Validate: naru mcp validate context7${C.reset}\n`);
+  console.log(`${C.dim}  Set: naru mcp set context7 ctx7sk_...  |  Validate: naru mcp validate context7${C.reset}`);
+
+  // Proactive health reminder — if 1 MCP fails, show detailed fix report
+  try {
+    const health = await getMcpHealthReport();
+    if (!health.healthy) {
+      console.log(formatMcpReport(health));
+    } else {
+      console.log(`\n${C.green}✓ ${health.summary}${C.reset}\n`);
+    }
+  } catch {}
 }
 
 /**

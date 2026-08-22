@@ -33,8 +33,8 @@ export function parseArgs(argv) {
       case 'init':
       case 'models':
       case 'model':
+      case 'plan':
       case 'mcp':
-      case 'context7':
       case 'new':
       case 'create':
       case 'update':

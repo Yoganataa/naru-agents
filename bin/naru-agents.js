@@ -134,6 +134,11 @@ switch (args.command) {
     console.log('\n💡 Next Step: Open OpenCode and type "@naru init" or send "Naru init repo" to execute 5-MCP deep AST & graph scanning!\n');
     break;
 
+  case 'plan':
+    const { runPlanManager } = await import('../src/plan-manager.mjs');
+    await runPlanManager(process.argv.slice(3));
+    break;
+
   case 'mcp':
     const { runMcpCLI } = await import('../src/mcp-manager.mjs');
     await runMcpCLI(process.argv.slice(3));
@@ -192,6 +197,7 @@ Commands:
   (none)              Launch interactive TUI
   new, create         Interactive Project Scaffolding Wizard (prompts Category, Stack, DB, Auth, MVP)
   init                Initialize repository knowledge & timestamped session structure
+  plan                Create plan + Gate 1 approval (Plan mode — edit deny until APPROVE)
   setup               Smart Setup: installs 11 agents, knowledge stores & auto-configures 5 MCPs
   mcp                 Unified MCP manager (opentui TUI) — no args = TUI, status/set/validate/init
   models              Manage AI models, check role compatibility & inspect OpenCode models
@@ -214,6 +220,8 @@ Options:
 
 Examples:
   naru init
+  naru plan "Add Google login"      # create plan + Gate 1 WAITING → Approve to allow edits
+  naru plan approve                 # approve Gate 1 → developer may edit
   naru mcp                          # TUI (opentui) — no args opens interactive manager
   naru mcp set context7 ctx7sk_...  # set & validate Context7 key (CLI)
   naru mcp validate                 # validate all MCPs
