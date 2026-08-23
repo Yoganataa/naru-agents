@@ -194,6 +194,13 @@ switch (args.command) {
     await runTestHarnessCLI(args);
     break;
 
+  case 'bench:prompts':
+  case 'test:prompts':
+  case 'spectrum':
+    const { runPromptSpectrumBenchmark } = await import('../src/prompt-evaluator.mjs');
+    await runPromptSpectrumBenchmark();
+    break;
+
   case 'help':
   case '--help':
   case '-h':

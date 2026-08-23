@@ -46,6 +46,9 @@ export function parseArgs(argv) {
       case 'harness':
       case 'test:harness':
       case 'test:workflow':
+      case 'bench:prompts':
+      case 'test:prompts':
+      case 'spectrum':
         if (result.command === undefined) result.command = arg;
         break;
       case '--global':
