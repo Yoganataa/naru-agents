@@ -41,6 +41,7 @@ coverage/
 *.db-journal
 *.sqlite
 *.sqlite-journal
+GOALS.md
 
 # Bun lock (use package-lock.json as source of truth)
 bun.lock
