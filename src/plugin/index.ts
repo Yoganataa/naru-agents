@@ -53,8 +53,10 @@ export const NaruPlugin = async (context: PluginContext = {}) => {
             if (agent) input.agent = agent;
           }
 
+          const callID = input.callID ?? input.callId;
+
           if (input.tool === "question" && isGate1ApprovalQuestion((input.args || {}) as Record<string, any>)) {
-            if (!input.sessionID || !input.callId || !beginGate1Approval(input.sessionID, input.callId, projectRoot)) {
+            if (!input.sessionID || !callID || !beginGate1Approval(input.sessionID, callID, projectRoot)) {
               throw new Error("⛔ [NARU HARD GUARD - GATE 1]: Cannot create a valid approval challenge because the complete planning package is missing.");
             }
           }
@@ -81,8 +83,9 @@ export const NaruPlugin = async (context: PluginContext = {}) => {
         },
 
         after: async (input: ToolExecuteInput, output?: ToolExecuteOutput) => {
-          if (input.tool === "question" && input.sessionID && input.callId) {
-            const approved = finalizeGate1Approval(input.sessionID, input.callId, projectRoot, output || {});
+          const callID = input.callID ?? input.callId;
+          if (input.tool === "question" && input.sessionID && callID) {
+            const approved = finalizeGate1Approval(input.sessionID, callID, projectRoot, output || {});
             if (approved) {
               console.info("[NARU] Gate 1 approved by native OpenCode question response.");
             }
@@ -98,7 +101,7 @@ export const NaruPlugin = async (context: PluginContext = {}) => {
     },
 
     event: async ({ event }: { event: SystemEvent }) => {
-      const properties = (event as any).properties || (event as any).data || {};
+      const properties = event.properties || event.data || {};
 
       if (event.type === "message.updated") {
         const info = properties.info;
