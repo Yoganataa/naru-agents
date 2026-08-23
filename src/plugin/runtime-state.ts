@@ -28,10 +28,11 @@ const GATE1_PLAN_FILES = [
   ".opencode/artifacts/prd.md",
   ".opencode/artifacts/goal-baseline.md",
   ".opencode/knowledge/architecture-blueprint.md",
+  ".opencode/knowledge/research-findings.md",
 ] as const;
 
 /**
- * Computes a content fingerprint for the complete Gate 1 planning package.
+ * Computes a content fingerprint for the complete Gate 1 planning and evidence package.
  * Missing files invalidate the fingerprint instead of producing partial approval.
  */
 export function computeGate1Fingerprint(projectRoot: string): string | null {
@@ -112,7 +113,7 @@ export function finalizeGate1Approval(
 }
 
 /**
- * Checks that the current planning package is byte-for-byte identical to the approved package.
+ * Checks that the current planning and research package is byte-for-byte identical to the approved package.
  */
 export function isGate1Approved(sessionID: string, projectRoot: string): boolean {
   const approval = gate1Approvals.get(sessionID);
