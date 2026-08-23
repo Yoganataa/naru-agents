@@ -45,6 +45,23 @@ export const NaruPlugin = async (context: PluginContext = {}) => {
     version: "0.0.3",
     description: "N.A.R.U. deterministic hard-constraint anti-bypass guardrails",
 
+    "experimental.chat.system.transform": async (
+      input: { sessionID?: string },
+      output: { system: string[] },
+    ) => {
+      const agent = input.sessionID ? getSessionAgent(input.sessionID) : undefined;
+      output.system.push([
+        "N.A.R.U. CONTROL-PLANE CONTRACT:",
+        "1. Never treat .opencode/artifacts/gate-status.md as proof of user approval; it is diagnostic only.",
+        "2. Gate 1 requires these complete artifacts before asking for approval: prd.md, goal-baseline.md, architecture-blueprint.md, research-findings.md.",
+        "3. The only valid Gate 1 approval question has header `NARU Gate 1 Approval` and an exact affirmative option label `APPROVE_GATE_1`.",
+        "4. Do not delegate to developer or mutate application code before that native question has returned the exact APPROVE_GATE_1 answer.",
+        "5. Research technical claims using credible primary sources (official documentation, release notes, standards, or peer-reviewed papers) before presenting them as facts.",
+        "6. If evidence is missing or conflicting, state the knowledge gap or conflict; never manufacture citations, verification dates, test results, or tool execution claims.",
+        agent ? `7. Active runtime agent: ${agent}. Obey its role boundary; never perform another role's work to bypass a gate.` : "7. Active runtime agent is not yet known; fail closed on role-sensitive assumptions.",
+      ].join("\n"));
+    },
+
     tool: {
       execute: {
         before: async (input: ToolExecuteInput, _output?: ToolExecuteOutput) => {
@@ -57,7 +74,7 @@ export const NaruPlugin = async (context: PluginContext = {}) => {
 
           if (input.tool === "question" && isGate1ApprovalQuestion((input.args || {}) as Record<string, any>)) {
             if (!input.sessionID || !callID || !beginGate1Approval(input.sessionID, callID, projectRoot)) {
-              throw new Error("⛔ [NARU HARD GUARD - GATE 1]: Cannot create a valid approval challenge because the complete planning package is missing.");
+              throw new Error("⛔ [NARU HARD GUARD - GATE 1]: Cannot create a valid approval challenge because the complete planning and research package is missing.");
             }
           }
 
