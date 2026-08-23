@@ -78,6 +78,14 @@ const FORBIDDEN_PATTERNS: RuleDef[] = [
     name: "hardcoded-secret",
     pattern: /(?:api[_-]?key|secret|password|token)\s*=\s*['"][A-Za-z0-9_\-]{16,}['"]/i,
     message: "Hardcoded secret, token, or private credential detected!"
+  },
+
+  // ── 7. Destructive Database Schema Alteration ────────────────────────────────
+  {
+    name: "destructive-db-drop",
+    pattern: /\b(?:DROP\s+TABLE|DROP\s+DATABASE|TRUNCATE\s+TABLE|DROP\s+COLUMN)\b/i,
+    message: "Destructive database schema alteration (DROP TABLE / DROP COLUMN / TRUNCATE) detected! Must obtain explicit user modal confirmation before applying destructive schema changes.",
+    allowWithTicket: true
   }
 ];
 
