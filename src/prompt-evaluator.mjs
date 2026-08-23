@@ -30,10 +30,14 @@ export async function runPromptSpectrumBenchmark() {
     await execAsync(`bun build ./src/plugin/index.ts --outfile "${bundlePath}" --target=node --format=esm`);
     const plugin = await import(`${pathToFileURL(bundlePath).href}?t=${Date.now()}`);
 
-    const { verifyQualityGates, scanSecurityViolations, CircuitBreakerGuard } = plugin;
-    const { beginGate1Approval, finalizeGate1Approval, isGate1Approved } = await import(
-      `${pathToFileURL(bundlePath).href}?runtime=${Date.now()}`,
-    );
+    const {
+      verifyQualityGates,
+      scanSecurityViolations,
+      CircuitBreakerGuard,
+      beginGate1Approval,
+      finalizeGate1Approval,
+      isGate1Approved,
+    } = plugin;
 
     // Tier 1: vague/newbie prompt must be blocked before application mutation.
     const t1Dir = join(baseScratch, "tier1");
