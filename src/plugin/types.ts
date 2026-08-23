@@ -1,4 +1,7 @@
-// ─── types.ts ── N.A.R.U. OpenCode TypeScript Plugin Contract Schemas ─────────
+// src/plugin/types.ts
+/**
+ * Minimal N.A.R.U. contracts for the stable OpenCode plugin hook API.
+ */
 
 export interface PluginContext {
   client?: any;
@@ -13,21 +16,27 @@ export interface PluginContext {
 
 export interface ToolExecuteInput {
   tool: string;
-  callId?: string;
   sessionID?: string;
+  callID?: string;
+  callId?: string;
+  agent?: string;
   args?: Record<string, any>;
   [key: string]: any;
 }
 
 export interface ToolExecuteOutput {
   result?: any;
+  output?: any;
+  metadata?: Record<string, any>;
   error?: any;
+  exitCode?: number;
   [key: string]: any;
 }
 
 export interface SystemEvent {
-  type: "session.created" | "session.idle" | "session.error" | "message.updated" | "file.edited" | string;
+  type: string;
   sessionID?: string;
+  properties?: Record<string, any>;
   data?: any;
   [key: string]: any;
 }
