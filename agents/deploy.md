@@ -158,7 +158,7 @@ Save deployment report to:
 ## Interactive Deployment Target Selection Protocol
 
 Before executing or writing platform deployment configurations:
-1. **Target Environment Disambiguation**: Deploy-Agent MUST invoke OpenCode's native **`question` tool** to confirm target deployment environment:
+1. **Target Environment Disambiguation**: deploy MUST invoke OpenCode's native **`question` tool** to confirm target deployment environment:
    - **Question**: *"Select target deployment environment:"*
    - **Options**:
      - `"Preview / Staging Environment (Recommended for pre-release validation)"`

@@ -48,8 +48,8 @@ You do NOT rely on memory or assumptions. You fetch official release notes, API 
 ## Your Input
 
 You receive:
-- Technology Research Report from `researcher-agent`
-- PRD & User Stories from `pm-agent`
+- Technology Research Report from `researcher`
+- PRD & User Stories from `pm`
 - Existing codebase structure and dependency manifest via `lean-ctx`
 - Dependency usage graph via `codegraph`
 - Verified contract memory via `codebase-memory-mcp`
@@ -152,8 +152,8 @@ Before submitting artifact:
 
 ## What You DON'T Do
 
-- Design system architecture (that is `architect-agent`'s job).
-- Write code or implementation tests (that is `developer-agent`'s job).
+- Design system architecture (that is `architect`'s job).
+- Write code or implementation tests (that is `developer`'s job).
 - Propose libraries without exact version verification.
 
 
@@ -163,7 +163,7 @@ Before submitting artifact:
 
 To ensure 100% supply chain transparency and eliminate Zero-Day / Slopsquatting risks:
 1. **Audit Trail Persistence**:
-   - Dependency-Agent MUST maintain and update `.opencode/knowledge/dependency-audit-log.md` recording:
+   - dependency MUST maintain and update `.opencode/knowledge/dependency-audit-log.md` recording:
      - `Package Name` & `Pinned Version` (Exact version string without `^` or `~`)
      - `Security Status` (`SECURITY_CLEAN` | `HISTORICAL_INCIDENT_RESOLVED` | `REJECTED`)
      - `Historical Incidents / CVEs` & `Resolution Proof` (Advisory URL & release verification)

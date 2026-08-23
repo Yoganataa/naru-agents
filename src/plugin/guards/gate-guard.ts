@@ -29,22 +29,60 @@ const SHELL_EXECUTION_TOOLS = new Set([
 ]);
 
 /**
+ * Checks whether Quality Gate 1 (PRD & Architecture Blueprint) has been explicitly approved
+ */
+function isGate1Approved(projectRoot: string): boolean {
+  const gateStatusPath = join(projectRoot, ".opencode", "artifacts", "gate-status.md");
+  const blueprintPath = join(projectRoot, ".opencode", "knowledge", "architecture-blueprint.md");
+
+  // 1. Check gate-status.md for explicit approval
+  if (existsSync(gateStatusPath)) {
+    try {
+      const content = readFileSync(gateStatusPath, "utf8");
+      if (
+        content.includes("GATE_1_STATUS: APPROVED") ||
+        content.includes("Gate 1: APPROVED") ||
+        content.includes("Gate 1: [✓ PASS]") ||
+        content.includes("GATE_1_STATUS: PASS") ||
+        content.includes("Gate 1 SOP: Plan") && content.includes("APPROVED")
+      ) {
+        return true;
+      }
+    } catch {}
+  }
+
+  // 2. Check architecture-blueprint.md for explicit approval signoff
+  if (existsSync(blueprintPath)) {
+    try {
+      const content = readFileSync(blueprintPath, "utf8");
+      if (
+        content.includes("GATE_1_STATUS: APPROVED") ||
+        content.includes("Gate 1: APPROVED") ||
+        content.includes("Status: APPROVED") ||
+        content.includes("STATUS: APPROVED")
+      ) {
+        return true;
+      }
+    } catch {}
+  }
+
+  return false;
+}
+
+/**
  * Validates whether the requested tool execution complies with N.A.R.U. Quality Gates
  */
 export function verifyQualityGates(input: ToolExecuteInput, projectRoot: string): GateVerificationResult {
   const toolName = (input.tool || "").toLowerCase();
   const args = input.args || input;
-
-  const blueprintPath = join(projectRoot, ".opencode", "knowledge", "architecture-blueprint.md");
-  const projectBriefPath = join(projectRoot, ".opencode", "artifacts", "project-brief.md");
-  const hasBlueprint = existsSync(blueprintPath) || existsSync(projectBriefPath);
+  const gate1Approved = isGate1Approved(projectRoot);
 
   // 1. Direct Code Mutation Tools
   if (CODE_MUTATION_TOOLS.has(toolName)) {
     const rawPath = String(args.path || args.TargetFile || args.target_file || args.targetFile || args.file || args.filepath || "");
     const normalizedPath = rawPath.replace(/\\/g, '/');
 
-    // Allow modifications to internal .opencode artifacts, knowledge, and docs
+    // Allow modifications to internal .opencode artifacts, knowledge, and docs (Planning Phase)
     if (
       normalizedPath.includes(".opencode") ||
       normalizedPath.includes("docs/") ||
@@ -55,11 +93,12 @@ export function verifyQualityGates(input: ToolExecuteInput, projectRoot: string)
       return { allowed: true, gate: 0 };
     }
 
-    if (!hasBlueprint) {
+    // Zero-Trust: Code mutation is strictly forbidden until Gate 1 is EXPLICITLY APPROVED
+    if (!gate1Approved) {
       return {
         allowed: false,
         gate: 1,
-        reason: "GATE_1_VIOLATION: Writing or modifying application code is strictly prohibited until Architecture Blueprint (.opencode/knowledge/architecture-blueprint.md) is created and approved!"
+        reason: "GATE_1_VIOLATION: Writing or modifying application code is strictly prohibited until PRD & Architecture Blueprint is presented to and EXPLICITLY APPROVED by the user (GATE_1_STATUS: APPROVED in gate-status.md)!"
       };
     }
 
@@ -89,14 +128,14 @@ export function verifyQualityGates(input: ToolExecuteInput, projectRoot: string)
     const isMutationCommand = /(?:>|>>|Out-File|Set-Content)\s+["']?([^\s"'>|&;]+)/i.test(command) ||
                               /(?:fs\.writeFileSync|open\([^,]+,\s*['"]w['"]\))/i.test(command);
     
-    if (isMutationCommand && !hasBlueprint) {
+    if (isMutationCommand && !gate1Approved) {
       const match = command.match(/(?:>|>>|Out-File|Set-Content)\s+["']?([^\s"'>|&;]+)/i);
       const target = match ? match[1].replace(/\\/g, '/') : "";
       if (target && !target.includes(".opencode") && !target.includes("docs/") && !target.includes("knowledge/") && !target.endsWith(".md")) {
         return {
           allowed: false,
           gate: 1,
-          reason: `GATE_1_VIOLATION: Modifying application code via shell redirection (${target}) is strictly prohibited until Architecture Blueprint is approved!`
+          reason: `GATE_1_VIOLATION: Modifying application code via shell redirection (${target}) is strictly prohibited until Architecture Blueprint is EXPLICITLY APPROVED by user!`
         };
       }
     }

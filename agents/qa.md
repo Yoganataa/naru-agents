@@ -188,20 +188,20 @@ Before submitting artifact:
 
 Self-Healing Flaky Test Quarantine Protocol
 
-QA-Agent MUST detect and isolate non-deterministic test failures:
+qa MUST detect and isolate non-deterministic test failures:
 1. **Flaky Test Identification**:
    - Jika sebuah test case gagal namun lulus saat diuji ulang tanpa perubahan kode, tandai sebagai `STATUS: FLAKY_TEST`.
 2. **Quarantine & Root-Cause Extraction**:
    - Pisahkan test flaky ke `.opencode/artifacts/flaky-tests.md`.
    - Diagnosa penyebab: race condition asinkron, `setTimeout` statis, bentrokan port database, atau kebocoran state antar test case.
-   - Delegasikan ke `hotfix-agent` untuk perbaikan deterministik (`waitFor` assertions, isolated DB transactions).
+   - Delegasikan ke `hotfix` untuk perbaikan deterministik (`waitFor` assertions, isolated DB transactions).
 
 
 ---
 
 Roblox Studio Automated Playtest & Quality Gate 4
 
-QA-Agent MUST verify Roblox experiences:
+qa MUST verify Roblox experiences:
 - Execute playtest sessions via StudioMCP and verify zero unhandled runtime script errors in Output log.
 - Verify 60 FPS performance on target mobile and PC device budgets.
 
@@ -210,6 +210,6 @@ QA-Agent MUST verify Roblox experiences:
 
 Roblox Multi-Device Emulation & Packet Fuzzing (Quality Gate 4)
 
-QA-Agent MUST test:
+qa MUST test:
 - UI layout across simulated mobile (iPhone SE, Galaxy), tablet (iPad), 1080p, 4K, and 21:9 Ultrawide screens.
 - Packet flood fuzzing on RemoteEvents to ensure rate-limiting drops excessive requests without server lag.

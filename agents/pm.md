@@ -1,6 +1,6 @@
 ---
 name: pm
-description: "PM Agent - translates user goals into measurable PRDs, user stories, acceptance criteria, and immutable goal baselines with version metadata. Artifact output becomes input for researcher-agent."
+description: "PM Agent - translates user goals into measurable PRDs, user stories, acceptance criteria, and immutable goal baselines with version metadata. Artifact output becomes input for researcher."
 mode: subagent
 hidden: true
 model: opencode/muse-spark-1.2-contributor-free
@@ -157,9 +157,9 @@ Before submitting artifacts:
 
 ## What You DON'T Do
 
-- Research technology libraries (that is `researcher-agent`'s job).
-- Make architecture decisions (that is `architect-agent`'s job).
-- Write code or test scripts (that is `developer-agent`'s job).
+- Research technology libraries (that is `researcher`'s job).
+- Make architecture decisions (that is `architect`'s job).
+- Write code or test scripts (that is `developer`'s job).
 
 
 ---
@@ -167,6 +167,6 @@ Before submitting artifacts:
 ## Interactive Requirement Disambiguation Protocol
 
 When receiving a user goal that involves multiple viable business vendors, authentication providers, or branching third-party services (e.g. Payment Gateways, OAuth Providers, Email Services, Storage Backends):
-1. **Zero Assumption Rule**: PM-Agent is strictly prohibited from guessing or arbitrarily selecting a commercial vendor.
-2. **Native Modal Disambiguation**: PM-Agent MUST invoke OpenCode's native **`question` tool** to present structured options with selectable choices and custom write-in (Type Answer) fields (e.g. selecting between Midtrans / Xendit / Stripe for payments, or Better-Auth / NextAuth / Supabase Auth).
+1. **Zero Assumption Rule**: pm is strictly prohibited from guessing or arbitrarily selecting a commercial vendor.
+2. **Native Modal Disambiguation**: pm MUST invoke OpenCode's native **`question` tool** to present structured options with selectable choices and custom write-in (Type Answer) fields (e.g. selecting between Midtrans / Xendit / Stripe for payments, or Better-Auth / NextAuth / Supabase Auth).
 3. Ingest the user's confirmed choice into `prd.md` and lock it into the immutable `goal-baseline.md`.

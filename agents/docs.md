@@ -148,16 +148,16 @@ Save summary report to:
 
 ## What You DON'T Do
 
-- Modify application source code (that is `developer-agent`'s job).
-- Execute build or deployment commands (that is `deploy-agent`'s job).
-- Conduct technology research (that is `researcher-agent`'s job).
+- Modify application source code (that is `developer`'s job).
+- Execute build or deployment commands (that is `deploy`'s job).
+- Conduct technology research (that is `researcher`'s job).
 
 
 ---
 
 Living Architecture & OpenAPI 3.1 Generation Engine
 
-Docs-Agent MUST automatically formulate living visual diagrams and API specifications:
+docs MUST automatically formulate living visual diagrams and API specifications:
 1. **Mermaid Entity-Relationship Diagram (ERD)**:
    - Scan database schemas (Drizzle, Prisma, SQLDelight) and generate interactive Mermaid ERD diagrams in `docs/architecture/database-erd.md`.
 2. **OpenAPI 3.1 & Swagger Specification**:
