@@ -1,6 +1,10 @@
-// ─── index.ts ── N.A.R.U. OpenCode TypeScript Plugin Entrypoint ───────────────
-// Hard-Constraint Anti-Bypass Guardrail Engine conforming to @opencode-ai/plugin
-// ──────────────────────────────────────────────────────────────────────────────
+// src/plugin/index.ts
+/**
+ * N.A.R.U. OpenCode plugin entrypoint.
+ *
+ * The plugin is a deterministic enforcement layer. LLM instructions are advisory;
+ * authorization decisions are made here at the OpenCode tool boundary.
+ */
 
 import type { PluginContext, ToolExecuteInput, ToolExecuteOutput, SystemEvent } from "./types.js";
 import { verifyQualityGates } from "./guards/gate-guard.js";
@@ -8,38 +12,68 @@ import { scanSecurityViolations } from "./guards/security-guard.js";
 import { globalCircuitBreaker } from "./guards/circuit-breaker.js";
 import { verifyRolePermissions } from "./guards/role-guard.js";
 import { handleSessionLifecycle } from "./events/session-lifecycle.js";
+import {
+  beginGate1Approval,
+  clearSessionRuntimeState,
+  finalizeGate1Approval,
+  getSessionAgent,
+  setSessionAgent,
+} from "./runtime-state.js";
 
+/**
+ * Returns true when a question request is the canonical N.A.R.U. Gate 1 approval prompt.
+ */
+function isGate1ApprovalQuestion(args: Record<string, any>): boolean {
+  if (!Array.isArray(args.questions)) return false;
+
+  return args.questions.some((question: any) => {
+    if (!question || typeof question !== "object") return false;
+    if (question.header !== "NARU Gate 1 Approval") return false;
+    if (!Array.isArray(question.options)) return false;
+    return question.options.some((option: any) => option?.label === "APPROVE_GATE_1");
+  });
+}
+
+/**
+ * Creates the N.A.R.U. plugin hook set for the active OpenCode project.
+ */
 export const NaruPlugin = async (context: PluginContext = {}) => {
   const projectRoot = context.project?.root || context.directory || process.cwd();
 
   return {
     name: "naru-guardrails",
-    version: "0.0.2",
-    description: "N.A.R.U. Deterministic Hard-Constraint Anti-Bypass & Multi-Agent Quality Gate Guardrails",
+    version: "0.0.3",
+    description: "N.A.R.U. deterministic hard-constraint anti-bypass guardrails",
 
-    // 1. Intercept Tool Execution (Hardware Firewall for LLM tool calls)
     tool: {
       execute: {
         before: async (input: ToolExecuteInput, _output?: ToolExecuteOutput) => {
-          // A. Enforce Circuit Breaker (Anti-Loop 2x failure protection)
+          if (input.sessionID) {
+            const agent = getSessionAgent(input.sessionID);
+            if (agent) input.agent = agent;
+          }
+
+          if (input.tool === "question" && isGate1ApprovalQuestion((input.args || {}) as Record<string, any>)) {
+            if (!input.sessionID || !input.callId || !beginGate1Approval(input.sessionID, input.callId, projectRoot)) {
+              throw new Error("⛔ [NARU HARD GUARD - GATE 1]: Cannot create a valid approval challenge because the complete planning package is missing.");
+            }
+          }
+
           const circuitCheck = globalCircuitBreaker.checkCircuit(input.tool, input.args || input);
           if (circuitCheck.tripped) {
             throw new Error(`⛔ [NARU HARD GUARD - CIRCUIT BREAKER]: ${circuitCheck.reason}`);
           }
 
-          // B. Enforce Role-Based Access Control (RBAC)
           const roleCheck = verifyRolePermissions(input);
           if (!roleCheck.allowed) {
             throw new Error(`⛔ [NARU HARD GUARD - ROLE VIOLATION]: ${roleCheck.reason}`);
           }
 
-          // C. Enforce Quality Gates 1-4 (Zero-Trust Hard Gates)
           const gateCheck = verifyQualityGates(input, projectRoot);
           if (!gateCheck.allowed) {
             throw new Error(`⛔ [NARU HARD GUARD - GATE ${gateCheck.gate} REJECTED]: ${gateCheck.reason}`);
           }
 
-          // D. Enforce Multi-Language No-Bypass & Security Invariants
           const securityCheck = scanSecurityViolations(input);
           if (!securityCheck.safe) {
             throw new Error(`⛔ [NARU HARD GUARD - SECURITY VIOLATION]:\n- ${securityCheck.violations.join("\n- ")}`);
@@ -47,20 +81,38 @@ export const NaruPlugin = async (context: PluginContext = {}) => {
         },
 
         after: async (input: ToolExecuteInput, output?: ToolExecuteOutput) => {
-          // Track tool execution success/failure for circuit breaker
+          if (input.tool === "question" && input.sessionID && input.callId) {
+            const approved = finalizeGate1Approval(input.sessionID, input.callId, projectRoot, output || {});
+            if (approved) {
+              console.info("[NARU] Gate 1 approved by native OpenCode question response.");
+            }
+          }
+
           if (output?.error || (output?.exitCode !== undefined && output.exitCode !== 0)) {
             globalCircuitBreaker.recordFailure(input.tool, input.args || input);
           } else {
             globalCircuitBreaker.recordSuccess(input.tool, input.args || input);
           }
-        }
-      }
+        },
+      },
     },
 
-    // 2. Intercept Lifecycle Events (Two-Tier Session Memory Sync)
     event: async ({ event }: { event: SystemEvent }) => {
+      const properties = (event as any).properties || (event as any).data || {};
+
+      if (event.type === "message.updated") {
+        const info = properties.info;
+        if (info?.role === "assistant" && info?.sessionID && info?.agent) {
+          setSessionAgent(info.sessionID, info.agent);
+        }
+      }
+
+      if (event.type === "session.deleted" && properties.sessionID) {
+        clearSessionRuntimeState(properties.sessionID);
+      }
+
       handleSessionLifecycle(event, context);
-    }
+    },
   };
 };
 
