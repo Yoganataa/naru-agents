@@ -1,11 +1,8 @@
-// ─── cli.mjs ── CLI argument parser ─────────────────────────────────────────
-// Simple argument parser for naru-agents CLI
-// ──────────────────────────────────────────────────────────────────────────────
-
+// src/cli.mjs
 /**
- * Parse CLI arguments
- * @param {string[]} argv - Raw arguments (without node/bun and script path)
- * @returns {{ command?: string, global?: boolean, project?: boolean, force?: boolean, dryRun?: boolean }}
+ * Parse N.A.R.U. CLI arguments.
+ * @param {string[]} argv Raw arguments after the executable name.
+ * @returns {{command?: string, global: boolean, project: boolean, force: boolean, dryRun: boolean, withMcp: boolean, auto: boolean, model?: string}}
  */
 export function parseArgs(argv) {
   const result = {
@@ -19,8 +16,9 @@ export function parseArgs(argv) {
     model: undefined,
   };
 
-  for (let i = 0; i < argv.length; i++) {
+  for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
+
     switch (arg) {
       case 'install':
       case 'uninstall':
@@ -40,15 +38,9 @@ export function parseArgs(argv) {
       case 'update':
       case 'upgrade':
       case 'audit':
-      case 'eval':
-      case 'test:agents':
-      case 'evolve':
+      case 'test':
       case 'harness':
-      case 'test:harness':
-      case 'test:workflow':
-      case 'bench:prompts':
-      case 'test:prompts':
-      case 'spectrum':
+      case 'bench':
         if (result.command === undefined) result.command = arg;
         break;
       case '--global':
@@ -88,7 +80,7 @@ export function parseArgs(argv) {
         result.command = 'help';
         break;
       default:
-        // Unknown argument - ignore
+        // Unknown arguments are intentionally ignored for backward-compatible option parsing.
         break;
     }
   }
