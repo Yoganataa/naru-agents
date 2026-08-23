@@ -1,7 +1,7 @@
 {
   "name": "@yoganataa/naru-agents",
-  "version": "0.0.3",
-  "description": "N.A.R.U. - Next-gen Autonomous Role-based Unified agents orchestration for OpenCode with deterministic guardrails and evidence-grounded workflows",
+  "version": "0.0.4",
+  "description": "N.A.R.U. engineering orchestration for OpenCode with deterministic guardrails and evidence-grounded workflow enforcement",
   "type": "module",
   "bin": {
     "naru": "./bin/naru.js",
@@ -31,10 +31,7 @@
     "opencode",
     "ai",
     "agent",
-    "naru",
     "orchestration",
-    "subagent",
-    "bun",
     "guardrails",
     "human-in-the-loop"
   ],
