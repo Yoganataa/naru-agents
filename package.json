@@ -1,7 +1,7 @@
 {
   "name": "@yoganataa/naru-agents",
-  "version": "0.0.2",
-  "description": "N.A.R.U. - Next-gen Autonomous Role-based Unified agents orchestration for OpenCode with 10 role-based subagents and RAG grounding",
+  "version": "0.0.3",
+  "description": "N.A.R.U. - Next-gen Autonomous Role-based Unified agents orchestration for OpenCode with deterministic guardrails and evidence-grounded workflows",
   "type": "module",
   "bin": {
     "naru": "./bin/naru.js",
@@ -20,6 +20,8 @@
   ],
   "scripts": {
     "test": "node bin/naru.js validate",
+    "test:plugin": "bun test src/plugin/guardrail.test.ts",
+    "bench:prompts": "node src/prompt-evaluator.mjs",
     "docs:preview": "node src/docs-preview.mjs",
     "build:plugin": "bun build ./src/plugin/index.ts --outfile ./dist/naru-plugin.js --target=node --format=esm",
     "build:bin": "bun build --compile --minify ./bin/naru.js --outfile ./dist/naru.exe",
@@ -32,18 +34,20 @@
     "naru",
     "orchestration",
     "subagent",
-    "bun"
+    "bun",
+    "guardrails",
+    "human-in-the-loop"
   ],
   "author": "yoganataa",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yoganataa/naru-agents.git"
+    "url": "https://github.com/Yoganataa/naru-agents.git"
   },
   "bugs": {
-    "url": "https://github.com/yoganataa/naru-agents/issues"
+    "url": "https://github.com/Yoganataa/naru-agents/issues"
   },
-  "homepage": "https://github.com/yoganataa/naru-agents#readme",
+  "homepage": "https://github.com/Yoganataa/naru-agents#readme",
   "devDependencies": {
     "marked": "^18.0.10"
   },
