@@ -1,19 +1,16 @@
 // src/plugin/guardrail.test.ts
 /**
- * Deterministic tests for N.A.R.U. plugin authorization and security invariants.
+ * Deterministic tests for N.A.R.U. plugin authorization and OpenCode V1 hook invariants.
  */
 
 import { describe, expect, it } from "bun:test";
 import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { NaruPlugin } from "./index.js";
 import { verifyQualityGates } from "./guards/gate-guard.js";
 import { scanSecurityViolations } from "./guards/security-guard.js";
-import {
-  beginGate1Approval,
-  finalizeGate1Approval,
-  isGate1Approved,
-} from "./runtime-state.js";
+import { beginGate1Approval, finalizeGate1Approval, isGate1Approved } from "./runtime-state.js";
 
 async function createPlanWorkspace(): Promise<string> {
   const root = await mkdtemp(join(tmpdir(), "naru-guardrail-"));
@@ -34,7 +31,7 @@ describe("N.A.R.U. deterministic guardrails", () => {
     await writeFile(join(root, ".opencode", "artifacts", "gate-status.md"), "GATE_1_STATUS: APPROVED\n");
 
     const result = verifyQualityGates(
-      { tool: "write", sessionID: "session-fake", args: { filePath: "src/app.ts", content: "export const x = 1;" } },
+      { tool: "write", sessionID: "session-fake", callID: "call-fake", args: { filePath: "src/app.ts", content: "export const x = 1;" } },
       root,
     );
 
@@ -46,7 +43,7 @@ describe("N.A.R.U. deterministic guardrails", () => {
     const root = await createPlanWorkspace();
 
     const result = verifyQualityGates(
-      { tool: "bash", sessionID: "session-shell", args: { command: "node -e \"require('fs').writeFileSync('src/app.ts','x')\"" } },
+      { tool: "bash", sessionID: "session-shell", callID: "call-shell", args: { command: "node -e \"require('fs').writeFileSync('src/app.ts','x')\"" } },
       root,
     );
 
@@ -54,7 +51,7 @@ describe("N.A.R.U. deterministic guardrails", () => {
     expect(result.gate).toBe(1);
   });
 
-  it("requires a real native-question answer bound to the approved plan fingerprint", async () => {
+  it("requires a native-question answer bound to the approved plan fingerprint", async () => {
     const root = await createPlanWorkspace();
     const sessionID = "session-approved";
     const callID = "call-approved";
@@ -69,13 +66,30 @@ describe("N.A.R.U. deterministic guardrails", () => {
     expect(isGate1Approved(sessionID, root)).toBe(false);
   });
 
+  it("exercises the actual OpenCode V1 hook contract where before-hook args are in output.args", async () => {
+    const root = await createPlanWorkspace();
+    const plugin = await NaruPlugin({ directory: root });
+    const hooks = plugin as any;
+
+    await expect(
+      hooks["tool.execute.before"](
+        { tool: "write", sessionID: "hook-session", callID: "hook-write" },
+        { args: { filePath: "src/app.ts", content: "export const x = 1;" } },
+      ),
+    ).rejects.toThrow(/GATE_1/);
+  });
+
   it("does not let arbitrary words such as 'fix' bypass suppression rules", () => {
     const first = scanSecurityViolations({
       tool: "write",
+      sessionID: "security-1",
+      callID: "security-call-1",
       args: { content: "// fix this later\n// @ts-ignore\nconst x: number = 'bad';" },
     });
     const second = scanSecurityViolations({
       tool: "write",
+      sessionID: "security-2",
+      callID: "security-call-2",
       args: { content: "// fix this later\n// @ts-ignore\nconst x: number = 'bad';" },
     });
 
@@ -86,6 +100,8 @@ describe("N.A.R.U. deterministic guardrails", () => {
   it("never allows a ticket to bypass destructive SQL protection", () => {
     const result = scanSecurityViolations({
       tool: "write",
+      sessionID: "sql-session",
+      callID: "sql-call",
       args: { content: "DROP TABLE users; // GH-123" },
     });
 
