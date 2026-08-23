@@ -1,6 +1,7 @@
 // src/plugin/types.ts
 /**
- * Minimal N.A.R.U. contracts for the stable OpenCode plugin hook API.
+ * Minimal N.A.R.U. contracts aligned with OpenCode V1 plugin hooks used by 1.18.x.
+ * OpenCode V1 passes tool arguments through the hook output object, not the hook input.
  */
 
 export interface PluginContext {
@@ -16,21 +17,25 @@ export interface PluginContext {
 
 export interface ToolExecuteInput {
   tool: string;
-  sessionID?: string;
-  callID?: string;
-  callId?: string;
+  sessionID: string;
+  callID: string;
   agent?: string;
-  args?: Record<string, any>;
-  [key: string]: any;
 }
 
-export interface ToolExecuteOutput {
-  result?: any;
-  output?: any;
+export interface ToolExecuteBeforeOutput {
+  args: Record<string, any>;
+}
+
+export interface ToolExecuteAfterInput extends ToolExecuteInput {
+  args: Record<string, any>;
+}
+
+export interface ToolExecuteAfterOutput {
+  title?: string;
+  output?: string;
   metadata?: Record<string, any>;
   error?: any;
   exitCode?: number;
-  [key: string]: any;
 }
 
 export interface SystemEvent {
