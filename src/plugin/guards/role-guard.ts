@@ -1,65 +1,59 @@
-// ─── role-guard.ts ── Role-Based Access Control (RBAC) Hard Enforcer ─────────
-// Enforces that analytical/read-only roles cannot mutate application source code
-// ──────────────────────────────────────────────────────────────────────────────
+// src/plugin/guards/role-guard.ts
+/**
+ * Enforces role-based least privilege for OpenCode V1 tool execution.
+ */
 
 import type { ToolExecuteInput } from "../types.js";
+import {
+  APPLICATION_MUTATION_TOOLS,
+  READ_ONLY_ROLES,
+} from "../policy.js";
 
-const READ_ONLY_ROLES = new Set([
-  "pm",
-  "architect",
-  "researcher",
-  "dependency",
-  "reviewer",
-  "qa",
-  "docs"
-]);
+/** Extracts the target path from native or legacy file mutation arguments. */
+function getTargetPath(input: ToolExecuteInput): string {
+  const args = input.args || {};
+  return String(
+    args.filePath ??
+    args.path ??
+    args.TargetFile ??
+    args.target_file ??
+    args.targetFile ??
+    args.file ??
+    args.filepath ??
+    "",
+  );
+}
 
-const CODE_MUTATION_TOOLS = new Set([
-  "write_file",
-  "edit_file",
-  "replace_file_content",
-  "patch_file",
-  "create_file",
-  "write_to_file",
-  "apply_patch",
-  "patch",
-  "multi_edit",
-  "append_file",
-  "insert_code",
-  "save_file"
-]);
+/** Returns true when the path belongs to N.A.R.U. control-plane artifacts. */
+function isControlPlanePath(path: string): boolean {
+  const normalized = path.replace(/\\/g, "/");
+  return normalized.startsWith(".opencode/") || normalized.startsWith("docs/");
+}
 
-/**
- * Validates whether the active subagent role is authorized to execute the requested tool
- */
+/** Validates whether the active role may execute the requested tool. */
 export function verifyRolePermissions(input: ToolExecuteInput): { allowed: boolean; reason?: string } {
-  const toolName = (input.tool || "").toLowerCase();
-  const agentName = String(input.agent || input.caller || input.args?.agent || "").toLowerCase();
+  const toolName = String(input.tool || "").toLowerCase();
+  const agentName = String(input.agent || input.caller || input.args?.agent || "").trim().toLowerCase();
 
-  // If no agent metadata attached, defer to GateGuard & SecurityGuard
-  if (!agentName) {
+  // Unknown agent identity is intentionally left to GateGuard and OpenCode permissions.
+  if (!agentName) return { allowed: true };
+
+  if (!READ_ONLY_ROLES.has(agentName) || !APPLICATION_MUTATION_TOOLS.has(toolName)) {
     return { allowed: true };
   }
 
-  if (READ_ONLY_ROLES.has(agentName) && CODE_MUTATION_TOOLS.has(toolName)) {
-    const rawPath = String(input.args?.path || input.args?.TargetFile || input.args?.target_file || "");
-    const normalizedPath = rawPath.replace(/\\/g, '/');
-
-    // Allow read-only roles to write artifacts and documentation
-    if (
-      normalizedPath.includes(".opencode") ||
-      normalizedPath.includes("docs/") ||
-      normalizedPath.includes("knowledge/") ||
-      normalizedPath.endsWith(".md")
-    ) {
-      return { allowed: true };
-    }
-
+  const path = getTargetPath(input);
+  if (toolName === "apply_patch" || toolName === "patch" || toolName === "multi_edit") {
     return {
       allowed: false,
-      reason: `ROLE_VIOLATION: Subagent '${agentName}' is a designated read-only / analytical role and is strictly forbidden from modifying application code (${rawPath}). Code modifications must be performed by '@developer' or '@hotfix'!`
+      reason: `ROLE_VIOLATION: '${agentName}' is read-only and cannot use patch mutation tools. Delegate code changes to 'developer' or 'hotfix'.`,
     };
   }
 
-  return { allowed: true };
+  if (isControlPlanePath(path)) return { allowed: true };
+
+  return {
+    allowed: false,
+    reason: `ROLE_VIOLATION: '${agentName}' is read-only and cannot modify application code (${path || "unknown target"}). Delegate code changes to 'developer' or 'hotfix'.`,
+  };
 }
