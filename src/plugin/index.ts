@@ -142,5 +142,6 @@ export { CircuitBreakerGuard, globalCircuitBreaker } from "./guards/circuit-brea
 export { verifyRolePermissions } from "./guards/role-guard.js";
 export { handleSessionLifecycle } from "./events/session-lifecycle.js";
 export { BudgetGuard } from "./guards/budget-guard.js";
+export { beginGate1Approval, finalizeGate1Approval, isGate1Approved } from "./runtime-state.js";
 
 export default NaruPlugin;
