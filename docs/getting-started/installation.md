@@ -5,55 +5,75 @@ title: Installation Guide — N.A.R.U.
 
 # Installation Guide
 
-N.A.R.U. is distributed directly via GitHub and pre-compiled native executables for **Windows**, **macOS**, and **Linux**.
+N.A.R.U. is distributed from the GitHub repository as an npm package source. The repository also contains build scripts for producing binaries; availability of a prebuilt release artifact must not be assumed unless a release explicitly provides one.
 
----
+## Requirements
 
-## 1. Global Installation Methods
+The current `package.json` declares:
 
-### Method A: Using Bun (Recommended)
+- Node.js `>=18.0.0`;
+- Bun `>=1.0`.
+
+Git is required for Git-based installation and repository development. OpenCode is required to use the agents and plugin integration.
+
+## Install with Bun
+
 ```bash
 bun install -g github:yoganataa/naru-agents
 naru setup --auto
 ```
 
-### Method B: Using NPM
+## Install with npm
+
 ```bash
 npm install -g github:yoganataa/naru-agents
 naru setup --auto
 ```
 
-### Method C: Using Standalone Native Binary
-Download or compile the single-file binary (`naru.exe` on Windows, `naru` on Linux/macOS) and place it in your system `PATH` (e.g. `~/.local/bin/`):
+## Local Development
+
 ```bash
-naru setup --auto
+git clone https://github.com/Yoganataa/naru-agents.git
+cd naru-agents
+bun install
 ```
 
----
+The package declares these relevant scripts:
 
-## 2. What naru setup --auto Does
+```text
+npm test
+npm run test:plugin
+npm run bench:prompts
+npm run docs:preview
+npm run build:plugin
+npm run build:bin
+npm run build:all
+```
 
-When you run `naru setup --auto`, the installer automatically executes:
-1. **Safety Backup**: Creates an immutable snapshot of your existing OpenCode configuration in `~/.config/opencode/.backups/`.
-2. **Subagent Installation**: Copies all 11 subagents and the knowledge base into `~/.config/opencode/agents/` and `~/.config/opencode/knowledge/`.
-3. **6-MCP Auto-Configuration**: Discovers locally installed MCP tools and merges configurations for all 6 servers (`context7`, `serena`, `codegraph`, `lean-ctx`, `codebase-memory-mcp`, and `roblox-studio`) into `~/.config/opencode/opencode.json`.
-4. **Post-Install Doctor Audit**: Runs an automatic health check verifying runtime dependencies, agent models, and MCP tool availability.
+Run the script that matches the verification or build target you actually need. A successful build command is not evidence that the resulting application is production-ready.
 
----
+## Verify the Installation
 
-## 3. System Requirements
-
-- **Operating System**: Windows 10/11 (x64), macOS 12+ (Apple Silicon / Intel), Linux (Ubuntu 20.04+, Debian 11+, Fedora 38+, Arch Linux).
-- **Runtimes**: Node.js 18+ or Bun 1.0+.
-- **OpenCode CLI**: OpenCode CLI installed and accessible in your shell (`opencode`).
-- **Version Control**: Git 2.30+.
-
----
-
-## 4. Post-Installation Verification
-
-Run the diagnostic doctor to confirm all systems are operational:
+Run:
 
 ```bash
 naru doctor
 ```
+
+For a repository validation check:
+
+```bash
+naru validate
+```
+
+For the plugin test suite:
+
+```bash
+bun test src/plugin/guardrail.test.ts
+```
+
+Record the actual command output when reporting verification. Do not infer a passing result from the existence of a command.
+
+## Important Notes
+
+The installer and runtime behavior are defined by the current source under `bin/` and `src/`. This documentation intentionally avoids claiming a fixed set of installed MCP servers, operating-system support matrix, backup semantics, or precompiled binaries unless those details are verified in the current implementation.
