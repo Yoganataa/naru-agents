@@ -1,64 +1,99 @@
 ---
 layout: default
-title: Quick Start Tutorial — N.A.R.U.
+title: Quick Start — N.A.R.U.
 ---
 
-# Quick Start & User Workflow Tutorial
+# Quick Start
 
-Learn how to use N.A.R.U. inside OpenCode to build production-grade software applications from scratch.
+This guide describes the verified workflow model rather than promising a fixed pipeline for every project.
 
----
+## 1. Open the Workspace
 
-## Step 1: Open Your Workspace in OpenCode
-
-Navigate to your project directory and start the OpenCode interactive interface:
+Start OpenCode in the repository you want to work on:
 
 ```bash
 cd my-project
 opencode
 ```
 
----
+The exact OpenCode installation and invocation options depend on your OpenCode setup.
 
-## Step 2: Invoke Naru as Team Lead Orchestrator
+## 2. Use Naru as the Orchestrator
 
-In the OpenCode prompt, invoke Naru using the `@naru` mention:
+Ask the `naru` agent to perform the task. For example:
 
 ```text
-@naru Build a modern fullstack SaaS dashboard with user authentication, PostgreSQL database, and Stripe subscriptions.
+@naru Add authentication to the existing application.
 ```
 
----
+Naru should first inspect the repository and determine the applicable workflow.
 
-## Step 3: Interactive Intake Questionnaire (Step 0)
+## 3. Discovery and Research
 
-Naru will immediately classify your intent as `GREENFIELD_CREATION` and invoke OpenCode's native interactive modal form to capture requirements without guessing:
+For a software change, Naru determines scope and gathers the evidence required for consequential decisions.
 
-1. **Category & Target Platform**: Select from Web Fullstack (Next.js 15), Mobile App (React Native / Expo), Backend API, Bot, Desktop (Tauri), etc.
-2. **Language & Runtime**: Select TypeScript / Bun, TypeScript / Node.js, Python, Go, or Rust.
-3. **Database & ORM**: Select PostgreSQL + Drizzle, SQLite + Drizzle, PostgreSQL + Prisma, or MongoDB.
-4. **Authentication & State**: Select Better-Auth, NextAuth.js / Auth.js, JWT, or Zustand.
-5. **Target Deployment**: Select Vercel, Cloudflare, Docker VPS, or Standalone Binary.
-6. **Must-Have MVP Stories**: Select core user stories or enter custom requirements.
+Research is not mandatory for every task. It is expected when the answer depends on current APIs, versions, security advisories, vendor behavior, or other external facts.
 
----
+## 4. Planning
 
-## Step 4: Autonomous Pipeline Execution & Quality Gates
+The planning phase produces the artifacts required by the current workflow. For a normal software change this includes the requirements/goal baseline and architecture blueprint, plus research or dependency evidence when applicable.
 
-Once you submit the intake form, Naru writes `.opencode/artifacts/project-brief.md` and sequentially drives the specialized subagents through the 4 Quality Gates:
+The plan should identify:
 
-1. **Product Management (pm-agent)**: Creates `prd.md`, backlog, and the Goal Traceability Matrix (`AC-XX`).
-2. **Technical Research (researcher-agent)**: Validates modern library versions via Context7 and checks GHSA/NVD threat databases.
-3. **Dependency Locking (dependency-agent)**: Locks exact manifest versions and verifies SLSA provenance.
-4. **Architecture Design (architect-agent)**: Creates Clean Architecture blueprints, ADR records, and system topology. *(Passes Quality Gate 1 & 2)*.
-5. **Code Synthesis (developer-agent)**: Writes production code, implementing the 5 States of UI Stack, O(1) algorithms, and No-Bypass security.
-6. **Adversarial Security Audit (reviewer-agent)**: Audits code for OWASP Top 10 vulnerabilities, anti-slop standards, and purges all dead code. *(Enforces Quality Gate 3)*.
-7. **Automated E2E Testing (qa-agent)**: Runs Playwright tests, visual regression OCR, and packet flood fuzzing. *(Enforces Quality Gate 4)*.
-8. **Documentation & Memory (docs-agent)**: Generates Mermaid ERDs, OpenAPI 3.1 specifications, and commits session learnings to SQLite graph memory.
-9. **Release Runbook (deploy-agent)**: Prepares containerized release scripts and production deployment guides.
+- scope and non-goals;
+- acceptance criteria;
+- implementation sequence;
+- material risks;
+- decisions requiring user input.
 
----
+## 5. Gate 1 — User Approval
 
-## Step 5: Final Production Delivery
+Before application-code mutation, Naru presents the plan and invokes the native OpenCode `question` tool.
 
-Naru synthesizes all generated artifacts and presents a clean, verified release summary with 100% requirement traceability.
+The approval option is:
+
+```text
+APPROVE_GATE_1
+```
+
+Only runtime authorization from that native response grants the implementation boundary. A file containing `APPROVED` does not.
+
+If the approved planning package changes, the runtime approval becomes invalid and the plan must be approved again.
+
+## 6. Implementation, Review, and QA
+
+After approval:
+
+1. `developer` implements the approved scope and tests.
+2. `reviewer` independently reviews the actual diff.
+3. `qa` runs checks that are applicable to the project.
+
+QA reports actual outcomes. It must not convert unavailable checks into passing results.
+
+Typical status values are:
+
+```text
+PASS
+FAIL
+BLOCKED
+NOT_APPLICABLE
+NOT_TESTED
+```
+
+## 7. Evidence-Based Report
+
+Naru reports results using explicit evidence classes:
+
+- `VERIFIED`
+- `USER_DECISION`
+- `ASSUMPTION`
+- `UNKNOWN/BLOCKED`
+
+This prevents a generated plan, model response, or intended test from being presented as an executed result.
+
+## Next Steps
+
+- Read the [N.A.R.U. Contract](../NARU-CONTRACT.md).
+- Review the [Agent Architecture](../architecture/overview.md).
+- Review [Workflow & Quality Gates](../workflow/pipelines.md).
+- See the [Installation Guide](installation.md) for package setup.
