@@ -5,71 +5,82 @@ title: Security & No-Bypass Policy — N.A.R.U.
 
 # Security & No-Bypass Policy
 
-N.A.R.U. uses security and engineering checklists to guide implementation and review. These checks are **policy requirements for applicable projects**, not proof that an arbitrary application is secure.
+N.A.R.U. uses engineering and security controls to prevent agents from hiding defects or silently bypassing intended quality checks. These controls are **policy requirements for applicable projects**, not proof that an arbitrary application is secure.
 
-## No-Bypass Principles
+## Core No-Bypass Rules
 
-Across supported languages, the agents should avoid:
+Agents should not hide defects through:
 
-- unexplained type/lint suppression;
+- unexplained type or lint suppression;
 - silent error swallowing;
-- unsafe error/optional unwrapping;
-- skipped tests without an explicit reason and tracking reference;
+- unsafe optional/error unwrapping used to silence correctness checks;
+- skipped or disabled tests without an explicit reason and tracking reference;
 - undocumented temporary workarounds;
-- dynamic execution or obfuscation patterns where they are not required by the project.
+- unnecessary dynamic execution or obfuscation.
 
-The exact language-specific rules are defined in the relevant agent contracts under `agents/`.
+The exact language-specific matrix is maintained in the agent contracts under `agents/`.
 
-## Platform-Specific Review Guidance
+## Language Coverage
 
-The repository contains review guidance for several software archetypes, including web/API, mobile, desktop, Roblox, messaging bots, CLI tools, backend services, and open-source packages.
+The policy applies conceptually across the languages supported by the repository's agent guidance. The syntax differs by language, but the intent is consistent:
 
-These are **conditional controls**. Reviewers should apply only the controls relevant to the actual project and verify them against the implementation and current authoritative documentation.
+> Do not make a failure disappear merely because it is inconvenient to fix.
 
-Examples include:
+A suppression can be legitimate when required by the project, but it must have an explicit technical reason and the tracking context required by the applicable agent contract.
 
-- validating web/API input and authorization boundaries;
-- secure credential storage for mobile applications;
-- restrictive desktop IPC and sandbox configuration;
-- server-authoritative validation for Roblox remotes;
-- cryptographic webhook signature verification for messaging integrations;
-- safe path handling for CLI utilities;
-- dependency pinning and provenance review for published packages.
+## Platform-Specific Controls
 
-A checklist item must not be reported as passed merely because the policy mentions it.
+N.A.R.U. includes conditional guidance for several archetypes, including:
 
-## Backend & Architecture Guidance
+- web/API applications;
+- mobile applications;
+- desktop applications;
+- Roblox experiences;
+- messaging bots;
+- CLI/developer tools;
+- backend services;
+- open-source packages.
 
-The policy encourages:
+Only controls relevant to the actual project should be applied. Reviewers must verify the control against implementation and current authoritative documentation.
 
-1. domain isolation from vendor/database adapters where clean architecture is appropriate;
-2. removal of dead code;
-3. explicit domain services with focused responsibilities;
-4. appropriate algorithmic complexity;
-5. manageable cognitive complexity;
-6. stateless scaling where the deployment model requires it.
+Examples include input validation and authorization boundaries, secure credential storage, restrictive IPC, server-authoritative Roblox state, webhook signature validation, safe path handling, and dependency/provenance review.
 
-Concrete thresholds, technologies, and architecture patterns are project decisions and must be verified rather than assumed.
+## Frontend and UI
 
-## Frontend & UI Guidance
-
-For applicable data-driven interfaces, the developer and reviewer should consider:
+For applicable interfaces, consider:
 
 - loaded, loading/skeleton, empty, error/retry, and mutation/in-flight states;
 - semantic controls and keyboard focus;
-- WCAG 2.2 AA accessibility requirements;
-- responsive layouts appropriate to the target device;
-- platform-specific UI constraints for Roblox when Roblox is the project target.
+- WCAG 2.2 AA requirements where applicable;
+- responsive layouts for the target device;
+- platform-specific UI constraints.
 
-The presence of a checklist does not prove visual, accessibility, or responsive compliance. QA evidence must come from actual applicable checks.
+These are review criteria, not automatic proof of visual or accessibility compliance.
+
+## Backend and Architecture
+
+Where appropriate, reviewers should consider:
+
+1. separation between domain logic and infrastructure adapters;
+2. unused/dead code;
+3. focused domain services;
+4. algorithmic complexity;
+5. cognitive complexity;
+6. stateless scaling requirements.
+
+Exact thresholds and technology choices are project-specific.
 
 ## Security Claim Discipline
 
-Do not report:
+Do not report any of the following as absolute facts without defined, executed evidence:
 
-- `secure` as an absolute property;
-- `zero vulnerabilities` without a defined and executed audit scope;
-- `production-ready` without the required project-specific evidence;
-- `100% compliant` unless the exact measured scope supports the statement.
+- `secure`;
+- `zero vulnerabilities`;
+- `100% compliant`;
+- `production-ready`.
 
-When a security control cannot be verified, report `UNKNOWN/BLOCKED` or `NOT_TESTED` rather than guessing.
+When a control cannot be verified, report `UNKNOWN/BLOCKED` or `NOT_TESTED`.
+
+## Runtime vs Policy
+
+The policy guides agent behavior. The OpenCode plugin is the deterministic enforcement boundary for the tool-level controls implemented in the repository. Prompt text alone must never be presented as a security mechanism.
