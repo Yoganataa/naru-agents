@@ -5,72 +5,93 @@ title: Quick Start — N.A.R.U.
 
 # Quick Start
 
-This guide describes the verified workflow model rather than promising a fixed pipeline for every project.
+This guide shows the intended N.A.R.U. workflow without assuming that every request needs the full lifecycle.
 
 ## 1. Open the Workspace
 
-Start OpenCode in the repository you want to work on:
+Start OpenCode in the repository you want N.A.R.U. to work on:
 
 ```bash
 cd my-project
 opencode
 ```
 
-The exact OpenCode installation and invocation options depend on your OpenCode setup.
+## 2. Ask Naru
 
-## 2. Use Naru as the Orchestrator
-
-Ask the `naru` agent to perform the task. For example:
+Use the primary `naru` agent for engineering work:
 
 ```text
 @naru Add authentication to the existing application.
 ```
 
-Naru should first inspect the repository and determine the applicable workflow.
+For a simple informational question, Naru may answer directly instead of launching a software-change pipeline.
 
-## 3. Discovery and Research
+## 3. Discovery
 
-For a software change, Naru determines scope and gathers the evidence required for consequential decisions.
+For repository changes, Naru inspects the existing workspace first and classifies the request. Typical categories include feature work, bug fixing, audit/setup, and informational questions.
 
-Research is not mandatory for every task. It is expected when the answer depends on current APIs, versions, security advisories, vendor behavior, or other external facts.
+The existing codebase is evidence. The agent should not redesign or rewrite components merely because a preferred pattern exists elsewhere.
 
-## 4. Planning
+## 4. Research When Required
 
-The planning phase produces the artifacts required by the current workflow. For a normal software change this includes the requirements/goal baseline and architecture blueprint, plus research or dependency evidence when applicable.
+Research is required when a decision depends materially on current external facts, such as:
 
-The plan should identify:
+- current APIs or SDK behavior;
+- package/version compatibility;
+- security advisories;
+- vendor-specific behavior;
+- changing platform requirements.
 
-- scope and non-goals;
+Stable concepts do not require arbitrary citation counts.
+
+## 5. Planning
+
+For a normal software change, planning should establish:
+
+- requirements and scope;
+- explicit non-goals;
 - acceptance criteria;
 - implementation sequence;
-- material risks;
-- decisions requiring user input.
+- relevant architecture and dependency decisions;
+- material risks and open decisions.
 
-## 5. Gate 1 — User Approval
+The planning package normally uses:
 
-Before application-code mutation, Naru presents the plan and invokes the native OpenCode `question` tool.
+```text
+.opencode/artifacts/prd.md
+.opencode/artifacts/goal-baseline.md
+.opencode/knowledge/architecture-blueprint.md
+```
 
-The approval option is:
+Additional research/dependency artifacts are added when applicable.
+
+## 6. Gate 1 — User Approval
+
+Before application-code mutation, Naru presents the plan and invokes OpenCode's native `question` tool.
+
+The explicit approval choice is:
 
 ```text
 APPROVE_GATE_1
 ```
 
-Only runtime authorization from that native response grants the implementation boundary. A file containing `APPROVED` does not.
+The runtime plugin validates this approval against the current planning state. Writing `APPROVED` to a file never grants authority.
 
-If the approved planning package changes, the runtime approval becomes invalid and the plan must be approved again.
+If the approved planning package changes, approval must be obtained again.
 
-## 6. Implementation, Review, and QA
+## 7. Implementation
 
-After approval:
+After Gate 1, `developer` or `hotfix` implements the approved scope. They should not silently add features or change architectural decisions without returning to the appropriate decision point.
 
-1. `developer` implements the approved scope and tests.
-2. `reviewer` independently reviews the actual diff.
-3. `qa` runs checks that are applicable to the project.
+## 8. Review
 
-QA reports actual outcomes. It must not convert unavailable checks into passing results.
+`reviewer` evaluates the actual diff against the goal baseline, architecture, relevant evidence, security-sensitive paths, dependencies, and test authenticity.
 
-Typical status values are:
+Review is independent of implementation.
+
+## 9. QA
+
+`qa` runs checks that are applicable to the project and reports actual outcomes:
 
 ```text
 PASS
@@ -80,20 +101,23 @@ NOT_APPLICABLE
 NOT_TESTED
 ```
 
-## 7. Evidence-Based Report
+A test that was planned but not executed is not a pass.
 
-Naru reports results using explicit evidence classes:
+## 10. Report
 
-- `VERIFIED`
-- `USER_DECISION`
-- `ASSUMPTION`
-- `UNKNOWN/BLOCKED`
+Naru separates:
 
-This prevents a generated plan, model response, or intended test from being presented as an executed result.
+- `VERIFIED` — directly evidenced;
+- `USER_DECISION` — explicitly selected;
+- `ASSUMPTION` — explicitly labeled;
+- `UNKNOWN/BLOCKED` — unresolved or unavailable.
+
+This prevents generated plans, intended commands, and model claims from being confused with execution evidence.
 
 ## Next Steps
 
-- Read the [N.A.R.U. Contract](../NARU-CONTRACT.md).
-- Review the [Agent Architecture](../architecture/overview.md).
-- Review [Workflow & Quality Gates](../workflow/pipelines.md).
-- See the [Installation Guide](installation.md) for package setup.
+- [Installation Guide](installation.md)
+- [Agent Architecture](../architecture/overview.md)
+- [Workflow & Quality Gates](../workflow/pipelines.md)
+- [Security & No-Bypass Policy](../workflow/no-bypass-policy.md)
+- [N.A.R.U. Contract](../NARU-CONTRACT.md)
