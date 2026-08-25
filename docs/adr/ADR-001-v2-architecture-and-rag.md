@@ -1,62 +1,102 @@
 ---
 layout: default
+title: ADR-001 — N.A.R.U. Architecture
 ---
 
-# ADR-001: N.A.R.U. (v0.0.2) Multi-Agent Architecture and Production RAG Grounding
+# ADR-001: N.A.R.U. Multi-Agent Architecture and Evidence-Grounded Workflow
 
 - **Status:** Accepted
-- **Date:** 2026-08-20
-- **Authors:** Naru AI Team & Lead Engineer
-- **References:**
-  - MetaGPT: `https://github.com/FoundationAgents/MetaGPT` (SOPs & Artifact Chain)
-  - LangGraph: `https://github.com/langchain-ai/langgraph` (State Persistence & Global Retry Budget)
-  - Haystack: `https://github.com/deepset-ai/haystack` (RAG Indexing, Citations & Freshness)
-  - CrewAI: `https://github.com/crewAIInc/crewAI` (Role-Based Execution)
-
----
+- **Date:** 2026-08-25
+- **Scope:** N.A.R.U. orchestration, agent responsibilities, evidence handling, and runtime enforcement
 
 ## Context
 
-In prototype iterations, multi-agent pipelines revealed several failure modes:
-1. **Cascading Hallucinations & Goal Drift**: Downstream agents deviated from initial requirements over multiple iterations.
-2. **Infinite Loops in Quality Gates**: Gates could alternate failures without ever exhausting a global budget or escalating to human operators.
-3. **Dependency Behavioral Surprises**: Libraries recommended during research failed at runtime due to version incompatibilities or missing features in the specified release.
-4. **Single-Language Bias**: Guardrails were focused on TypeScript, ignoring Go, Python, Rust, and Java.
-5. **Ungrounded Interactive Responses**: Orchestrators answered direct user questions from parametric memory without verifiable citations.
+Earlier N.A.R.U. iterations accumulated broad promises and tightly prescribed pipelines. This created several risks:
+
+1. workflow requirements were treated as universal even when a task did not need them;
+2. documentation duplicated model, MCP, and platform claims that could become stale;
+3. prompt instructions were sometimes described as if they were deterministic security controls;
+4. generated artifacts could be confused with execution evidence;
+5. benchmark or checklist language could be mistaken for proof of software quality;
+6. fixed gate counts and mandatory agent handoffs increased process overhead for simple tasks.
 
 ## Decision
 
-We have established **N.A.R.U. (v0.0.2)**, introducing an 11-agent sequential assembly line with the following structural pillars:
+N.A.R.U. uses an evidence-grounded orchestration model with a deterministic runtime enforcement layer.
 
-### 1. Sequential SOPs & Immutable Goal Baseline (MetaGPT Foundation)
-- The pipeline initiates with `pm-agent` generating both `prd.md` and an immutable `goal-baseline.md` with explicit `naru_version: "0.0.2"`.
-- Every gate validates against this baseline contract to ensure zero drift.
+### 1. State-Based Workflow
 
-### 2. Dual-Layer Retry Budget (LangGraph Foundation)
-- To eliminate unbounded retry cycles, we implement:
-  - `gate_max_retries = 3` per gate.
-  - `pipeline_retry_budget = 8` globally.
-- Selecting `[R] Reset Budget (+8)` simultaneously resets the global budget to 8 AND resets all per-gate counters to 0.
+The default software-change workflow is:
 
-### 3. Dependency Behavioral Contracts (`dependency-agent`)
-- Pre-commits candidate libraries to strict 4-pillar contract testing (Feature existence in exact version, behavioral stability in range, peer dependency compatibility, and stability).
-- `STATUS: CONDITIONAL` permits usage only with explicit ADR risk notation and 1-click user confirmation.
-- `STATUS: REJECTED` requires minimal 2 verified alternatives.
+```text
+DISCOVER → RESEARCH* → PLAN → USER APPROVAL → IMPLEMENT → REVIEW → QA → REPORT
+```
 
-### 4. Multi-Language No-Bypass Policy
-- Enforces strict prohibition against silencing exceptions, blank ignores, or unlinked test skips across Go, Python, JavaScript, TypeScript, Rust, Dart, Kotlin, C, C++, C#, or Java.
+`RESEARCH` is conditional. Other states may be skipped only when genuinely inapplicable.
 
-### 5. Production RAG Grounding & Interactive Query Distinction (Haystack Foundation)
-- **Internal State Queries**: Answered instantly from local artifacts with zero RAG latency.
-- **Technical / Domain Claims**: Retrieved from indexed verified memory (`codebase-memory-mcp`) and live docs (`context7`), requiring full citations (`source_url`, `source_type`, `verified_date`, freshness status).
-- Claims lacking evidence return `STATUS: KNOWLEDGE_GAP` and halt execution rather than speculating.
+### 2. Gate 1 Runtime Authorization
+
+Application-code mutation requires explicit user approval through the native OpenCode `question` tool.
+
+The runtime plugin validates this state. Workspace files are diagnostic artifacts and cannot create authorization by themselves.
+
+### 3. Evidence Classification
+
+Important claims use four classes:
+
+- `VERIFIED`;
+- `USER_DECISION`;
+- `ASSUMPTION`;
+- `UNKNOWN/BLOCKED`.
+
+The system prefers an explicit unknown over an invented success claim.
+
+### 4. Separation of Instruction and Enforcement
+
+Agent Markdown defines role behavior and engineering policy. The OpenCode plugin enforces deterministic tool-level constraints such as mutation gating, role checks, shell restrictions, security-pattern checks, and circuit breaking.
+
+Prompt compliance is not treated as a security boundary.
+
+### 5. Source-of-Truth Documentation
+
+GitHub Pages documentation describes the current repository behavior without duplicating volatile model/MCP metadata unnecessarily. Agent frontmatter is authoritative for model and permission assignments. CLI source and `--help` output are authoritative for commands. Runtime/tool results are authoritative for execution claims.
+
+### 6. Conditional Controls
+
+Security, architecture, testing, UI, and platform controls are applied according to project applicability. A checklist item is not considered passed merely because it appears in policy documentation.
 
 ## Consequences
 
 ### Positive
-- **Deterministic Production Quality**: Eliminates undetected regressions and dependency mismatches before coding begins.
-- **Polyglot Readiness**: Native support for Go (e.g., `syncer-go-api`), Python, Rust, Java, and TypeScript projects.
-- **Traceability**: Every technical decision links directly to official documentation or peer-reviewed literature.
 
-### Trade-offs & Mitigations
-- **Increased Pipeline Steps**: 11 agents introduce more sequential handoffs. *Mitigation*: Simple and Standard modes remain available for quick tasks that do not require full lifecycle execution.
+- Less workflow overhead for simple tasks.
+- Clear distinction between model guidance and deterministic enforcement.
+- Reduced documentation drift from volatile model/MCP information.
+- More honest reporting of blocked and untested states.
+- Gate 1 remains a concrete authorization boundary for application mutation.
+
+### Trade-offs
+
+- Some claims require explicit verification rather than relying on static documentation.
+- The workflow is less rigid than a fixed 11-agent assembly line.
+- Model/MCP details must be inspected from the active configuration when exact information is required.
+
+## Rejected Assumptions
+
+This ADR intentionally does **not** establish that:
+
+- N.A.R.U. makes arbitrary generated software production-ready;
+- a fixed number of MCP servers is present in every installation;
+- one model is universally superior;
+- a checklist proves security;
+- a generated artifact proves implementation correctness;
+- every task requires every agent.
+
+## Verification Sources
+
+For current behavior, use:
+
+- `agents/*.md` for agent contracts and model/permission configuration;
+- `src/plugin/` for runtime enforcement;
+- CLI source and `naru --help` for command behavior;
+- actual tool/test output for execution evidence.
