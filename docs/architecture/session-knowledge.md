@@ -1,58 +1,79 @@
 ---
 layout: default
-title: Session Knowledge & MemGPT — N.A.R.U.
+title: Session Knowledge — N.A.R.U.
 ---
 
-# Two-Tier Session Knowledge & Episodic Memory
+# Session Knowledge
 
-N.A.R.U. implements a **Two-Tier Hierarchical Knowledge System** grounded in MemGPT research (Packer et al.) to retain architectural context, learned heuristics, and maintainability records across independent sessions.
+N.A.R.U. can persist project knowledge across sessions, but documentation must distinguish **repository-backed memory** from claims about a particular memory implementation being active in every installation.
 
----
+## Knowledge Layers
 
-## Architectural Topology
+The repository uses `.opencode/knowledge/` for durable project context and `.opencode/artifacts/` for workflow evidence.
 
-```mermaid
-flowchart TD
-    SESSION["Active Development Session (OpenCode)"]
-    
-    SESSION --> TIER1["Tier 1: Episodic Snapshot (.opencode/knowledge/sessions/{ISO_TIMESTAMP}/)
-- session-summary.md: Goals achieved, modified files, test results
-- gate-status.md: Final status of Quality Gates 1-4
-- latest.json: Active session pointer"]
-    
-    TIER1 --> CONSOLIDATE["Consolidation & Reflection Loop (docs-agent & naru)"]
-    
-    CONSOLIDATE --> TIER2["Tier 2: Institutional Knowledge Base (.opencode/knowledge/)
-- heuristics.md: Prescriptive solutions to resolved bugs
-- patterns.md: Proven architectural conventions
-- pipeline-history.md: Append-only audit log
-- SQLite Graph Memory via codebase-memory-mcp"]
+A typical topology is:
+
+```text
+.opencode/
+├── artifacts/
+│   ├── prd.md
+│   ├── goal-baseline.md
+│   ├── architecture.md
+│   ├── implementation.md
+│   ├── review.md
+│   └── qa-report.md
+└── knowledge/
+    ├── sessions/
+    │   └── {timestamp}/
+    ├── architecture-blueprint.md
+    ├── heuristics.md
+    ├── patterns.md
+    └── pipeline-history.md
 ```
 
----
+Exact files depend on the workflow and current implementation.
 
-## Tier 1: Episodic Session Snapshots
+## Session Snapshots
 
-At the conclusion of every development milestone, `docs-agent` writes an isolated episodic snapshot:
-- **Path**: `.opencode/knowledge/sessions/{ISO_TIMESTAMP}/`
-- **Files**:
-  - `session-summary.md`: Record of user requests, modified files, execution duration, and test suites executed.
-  - `gate-status.md`: Audit attestation for Quality Gates 1, 2, 3, and 4.
-- **Active Pointer**: `.opencode/knowledge/sessions/latest.json`
-  ```json
-  {
-    "last_session_id": "2026-08-21T22-15-00-000Z",
-    "status": "SUCCESS",
-    "version": "0.0.2",
-    "platform": "web_fullstack"
-  }
-  ```
+When the documentation workflow creates a session snapshot, it should record facts such as:
 
----
+- request and scope;
+- decisions made;
+- files changed;
+- checks actually executed;
+- unresolved blockers;
+- final workflow state.
 
-## Tier 2: Institutional Memory & SQLite Knowledge Graph
+A session snapshot is historical evidence. It does not become authority over runtime state merely because it contains a status string.
 
-When recurring bugs are resolved or new architectural patterns are established:
-1. **Heuristics Reflexion**: Naru appends root-cause learnings into `.opencode/knowledge/heuristics.md`.
-2. **Entity Creation**: `docs-agent` invokes `codebase-memory-mcp` to call `create_entity` and `create_relation`, mapping domain components in the SQLite knowledge graph.
-3. **Graph Persistence**: `docs-agent` calls `save_graph` to commit memory snapshots to disk, ensuring future development sessions automatically inherit institutional context.
+## Institutional Knowledge
+
+Reusable project knowledge may include:
+
+- architectural conventions;
+- resolved incident patterns;
+- recurring constraints;
+- dependency decisions;
+- lessons from previous reviews.
+
+Knowledge should be updated from verified project evidence rather than model speculation.
+
+## Knowledge Graph Integrations
+
+When `codebase-memory-mcp` is actually configured and available, the docs workflow can use its graph operations to persist relationships between project entities. The presence of documentation mentioning those operations does not prove that the MCP server is installed, connected, or successfully persisted a graph in a particular run.
+
+## Memory and Truth
+
+Persistent memory is context, not execution proof.
+
+For example:
+
+- a remembered decision does not prove the current code still follows it;
+- a stored test result does not prove the test passed today;
+- a remembered dependency version does not prove the current lockfile uses it.
+
+Current repository state and actual tool results take precedence when they conflict with historical memory.
+
+## Operational Principle
+
+Use memory to avoid rediscovering context. Use current code, runtime events, and executed checks to establish present truth.
