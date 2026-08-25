@@ -1,107 +1,73 @@
 ---
 layout: default
-title: CLI Command Reference — N.A.R.U.
+title: CLI Reference & Diagnostics — N.A.R.U.
 ---
 
-# CLI Command Reference & Diagnostics
+# CLI Reference & Diagnostics
 
-N.A.R.U. provides a comprehensive suite of command-line utilities for installation, health diagnostics, model management, and cold-start indexing.
+The CLI documentation must follow the installed version's actual command surface. Run `naru --help` whenever a command or option is uncertain.
 
----
+## `naru setup`
 
-## 1. naru setup — Smart System Setup
-
-Automates the installation and configuration of all subagents and MCP servers.
+Sets up the N.A.R.U. configuration used by the current version.
 
 ```bash
-# Interactive setup with confirmation prompts
 naru setup
-
-# Fully automated non-interactive setup (CI / Headless)
 naru setup --auto
 ```
 
-**What it does:**
-- Creates a safety backup snapshot in `~/.config/opencode/.backups/`.
-- Installs 11 subagent files and 4 knowledge base stores into `~/.config/opencode/`.
-- Discovers local binaries and auto-configures all 6 MCP servers in `opencode.json`.
+Do not assume that setup installs a fixed number of agents, MCP servers, backups, or knowledge stores. Those effects are implementation details of the current CLI.
 
----
+## `naru doctor`
 
-## 2. naru doctor — System Diagnostic & Health Audit
-
-Performs a thorough, automated diagnostic of your local environment:
+Runs environment and installation diagnostics:
 
 ```bash
 naru doctor
 ```
 
-**Diagnostic Checks:**
-1. **System & Runtime Environment**: Node.js, Bun, Git, OpenCode CLI version, and config directory paths.
-2. **Package Managers**: Detects `bun`, `npm`, `cargo`, `pip`, and `winget`.
-3. **Agent Definitions & AI Models**: Verifies 11/11 agents installed, role-model alignment, and RAG stores.
-4. **6-MCP Server Status**: Tests availability of `context7`, `serena`, `codegraph`, `lean-ctx`, `codebase-memory-mcp`, and `roblox-studio`.
+Treat the command output as the source of truth for the current machine.
 
----
+## `naru models`
 
-## 3. naru models — Interactive Model & Reasoning Manager
-
-Allows discovering local OpenCode models, adjusting reasoning effort variants, or assigning custom models with capability validation:
+Inspects or manages model configuration exposed by the current CLI:
 
 ```bash
-# Launch interactive model management menu
 naru models
-
-# List discovered OpenCode models and capability badges non-interactively
-naru models --list
 ```
 
-**Available Interactive Actions:**
-- **Option 1**: Apply 1 unified model across all 11 subagents.
-- **Option 2**: Configure models by Cognitive Role Cluster (Strategic Triad, Coding, QA, DevOps, etc.).
-- **Option 3**: Configure individual subagents (Model and Reasoning Variant).
-- **Option 4**: Reset all 11 subagents to N.A.R.U. optimal benchmark defaults.
+Use `naru models --help` to discover options supported by the installed version.
 
----
+## `naru init`
 
-## 4. naru init repo — Cold-Start Repository Indexing
-
-Initializes N.A.R.U. in any existing or new repository:
+Initializes N.A.R.U. in a repository according to the current CLI implementation:
 
 ```bash
-naru init repo
+naru init
 ```
 
-**What it does:**
-- Scans the repository using CodeGraph and Serena LSP.
-- Generates an architectural blueprint (`.opencode/artifacts/architecture-blueprint.md`).
-- Seeds the persistent SQLite knowledge graph via Codebase Memory MCP.
+Do not substitute undocumented subcommands or assume that initialization creates a particular MCP/database state without verifying the current source or command output.
 
----
+## `naru validate`
 
-## 5. naru backup — Safety Snapshot Manager
-
-Manages configuration backups and rollbacks:
-
-```bash
-# Create an immediate configuration snapshot
-naru backup
-
-# List all existing safety snapshots
-naru backup --list
-
-# Restore configuration from a specific snapshot timestamp
-naru backup --restore <snapshot-id>
-```
-
----
-
-## 6. naru validate — Frontmatter & Permission Validator
-
-Validates all subagent markdown files against OpenCode schema standards:
+Validates the repository's N.A.R.U. configuration according to the current validator:
 
 ```bash
 naru validate
 ```
 
-Ensures all 11 subagents contain valid YAML frontmatter, step budgets, and granular tool permissions.
+## Diagnostics Workflow
+
+When something fails, capture:
+
+1. the exact command;
+2. the relevant environment/runtime versions;
+3. the complete error message;
+4. the exit status;
+5. the affected configuration or repository state, excluding secrets.
+
+Then classify the result as `VERIFIED`, `UNKNOWN/BLOCKED`, or another appropriate evidence state. Never turn an unexecuted recovery step into a claimed fix.
+
+## When Documentation and CLI Disagree
+
+The current source and `naru --help` output take precedence over this page. If a command documented here no longer exists, update the documentation rather than preserving an obsolete command for compatibility with old text.
