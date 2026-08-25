@@ -5,7 +5,7 @@ title: Installation Guide — N.A.R.U.
 
 # Installation Guide
 
-N.A.R.U. is distributed from the GitHub repository as an npm package source. The repository also contains build scripts for producing binaries; availability of a prebuilt release artifact must not be assumed unless a release explicitly provides one.
+N.A.R.U. is distributed from this GitHub repository. Installation and runtime behavior are defined by the current package and CLI source; do not infer features that are not present in the installed version.
 
 ## Requirements
 
@@ -14,7 +14,7 @@ The current `package.json` declares:
 - Node.js `>=18.0.0`;
 - Bun `>=1.0`.
 
-Git is required for Git-based installation and repository development. OpenCode is required to use the agents and plugin integration.
+Git is required for Git-based installation and repository development. OpenCode is required for the agent/plugin workflow.
 
 ## Install with Bun
 
@@ -38,42 +38,36 @@ cd naru-agents
 bun install
 ```
 
-The package declares these relevant scripts:
-
-```text
-npm test
-npm run test:plugin
-npm run bench:prompts
-npm run docs:preview
-npm run build:plugin
-npm run build:bin
-npm run build:all
-```
-
-Run the script that matches the verification or build target you actually need. A successful build command is not evidence that the resulting application is production-ready.
+Inspect the available package scripts with the repository's `package.json`. Run only the checks relevant to the change you are making.
 
 ## Verify the Installation
 
-Run:
+Start with:
 
 ```bash
 naru doctor
 ```
 
-For a repository validation check:
+For repository/agent validation:
 
 ```bash
 naru validate
 ```
 
-For the plugin test suite:
+For plugin tests, use the test command defined by the current package configuration. For example, when the repository exposes the guardrail test file directly:
 
 ```bash
 bun test src/plugin/guardrail.test.ts
 ```
 
-Record the actual command output when reporting verification. Do not infer a passing result from the existence of a command.
+The command itself is not evidence of success. Report its actual exit status and output.
+
+## Build and Documentation
+
+The repository may expose build and documentation scripts through `package.json`. Use the current scripts as the source of truth rather than assuming a fixed release artifact or deployment process.
+
+For the GitHub Pages documentation site, see the files under `docs/` and use the repository's configured documentation preview script when available.
 
 ## Important Notes
 
-The installer and runtime behavior are defined by the current source under `bin/` and `src/`. This documentation intentionally avoids claiming a fixed set of installed MCP servers, operating-system support matrix, backup semantics, or precompiled binaries unless those details are verified in the current implementation.
+This guide intentionally does not promise a fixed MCP inventory, operating-system matrix, backup behavior, prebuilt binaries, or installer side effects unless those properties are verified in the current implementation.
