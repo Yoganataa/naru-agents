@@ -5,7 +5,7 @@ title: Agent Architecture — N.A.R.U.
 
 # Agent Architecture
 
-N.A.R.U. separates software-engineering responsibilities across a primary orchestrator and specialized agents. The repository currently contains 11 agent definitions.
+N.A.R.U. separates engineering responsibilities across one primary orchestrator and ten specialized agents. The agent files under `agents/` are the source of truth for model assignments, permissions, and role-specific instructions.
 
 ## Agent Responsibilities
 
@@ -23,61 +23,66 @@ N.A.R.U. separates software-engineering responsibilities across a primary orches
 | `deploy` | Release and deployment operations |
 | `hotfix` | Narrowly scoped incident and regression fixes |
 
-The exact model, temperature, step limit, and permissions for each agent are defined in the corresponding file under `agents/`. Documentation should not override those definitions.
-
 ## Responsibility Boundaries
 
 ```text
-                    ┌──────────────┐
-                    │    naru      │
-                    │ Orchestrator │
-                    └──────┬───────┘
-                           │
-             ┌─────────────┴─────────────┐
-             ↓                           ↓
-       Requirements & Evidence       Architecture
-       pm / researcher /             architect / dependency
-       dependency
-             │                           │
-             └─────────────┬─────────────┘
-                           ↓
-                    USER APPROVAL
-                       Gate 1
-                           │
-                           ↓
-                      developer
-                           │
-                           ↓
-                       reviewer
-                           │
-                           ↓
-                          qa
-                           │
-                  ┌────────┴────────┐
-                  ↓                 ↓
-                docs             deploy
+                         ┌──────────────┐
+                         │     naru     │
+                         │ Orchestrator │
+                         └──────┬───────┘
+                                │
+             ┌──────────────────┼──────────────────┐
+             ↓                  ↓                  ↓
+            pm             researcher         dependency
+             │                  │                  │
+             └──────────────────┼──────────────────┘
+                                ↓
+                           architect
+                                │
+                                ↓
+                         USER APPROVAL
+                            Gate 1
+                                │
+                                ↓
+                           developer
+                                │
+                                ↓
+                            reviewer
+                                │
+                                ↓
+                               qa
+                                │
+                         ┌──────┴──────┐
+                         ↓             ↓
+                       docs         deploy
 
-              hotfix is used for scoped incidents.
+                    hotfix handles scoped incidents.
 ```
 
-## Runtime Enforcement
+## Orchestration vs Enforcement
 
-The repository also contains an OpenCode plugin under `src/plugin/`. It is the deterministic enforcement layer for the workflow.
+The architecture intentionally has two control planes:
 
-Current guard categories include:
+### Agent instruction plane
 
-- mutation authorization;
-- workspace path validation;
-- read-only shell restrictions before Gate 1;
-- role permissions;
-- security-pattern checks;
-- circuit breaking for repeated failures;
-- native-question-based Gate 1 runtime state.
+Markdown contracts describe responsibilities, workflow expectations, evidence discipline, and role boundaries. They guide model behavior but cannot be treated as a security boundary.
 
-This separation is important: prompt instructions can guide an agent, but runtime guards are responsible for enforcing tool-level constraints.
+### Runtime enforcement plane
 
-## Evidence and Limitations
+The OpenCode plugin under `src/plugin/` enforces tool-level constraints independently of prompt compliance. The current implementation includes mutation authorization, project-root validation, pre-Gate-1 shell restrictions, role checks, security-pattern checks, circuit breaking, and native-question Gate 1 runtime state.
 
-N.A.R.U. does not claim that its agent roster or guardrails make arbitrary generated software secure or production-ready. Verification is scoped to the checks that actually run for a particular task.
+## Gate 1
 
-See the [N.A.R.U. Contract](../NARU-CONTRACT.md) for the canonical evidence and workflow rules.
+For application changes, the native OpenCode `question` response is the authorization source. The runtime plugin validates the approval against the current planning state.
+
+A generated artifact containing `APPROVED` is not equivalent to runtime authorization.
+
+## Agent Selection
+
+N.A.R.U. should delegate only when the task benefits from the specialist's responsibility. A simple informational question does not need the complete software-change pipeline. A bugfix does not require pretending that it is a greenfield project. Workflow depth should follow task risk and applicability.
+
+## Evidence Boundaries
+
+Architecture documents describe intended structure. They do not prove implementation conformance. That is established later by review, tests, runtime checks, or other direct evidence.
+
+See [Workflow & Quality Gates](../workflow/pipelines.md) and the [N.A.R.U. Contract](../NARU-CONTRACT.md).
