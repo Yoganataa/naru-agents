@@ -4,33 +4,24 @@ title: N.A.R.U. — Documentation
 ---
 
 <div class="hero-container">
-  <div class="hero-badge">
-    <span class="badge-pulse"></span>
-    <span>Evidence-grounded OpenCode orchestration</span>
-  </div>
-
-  <h1 class="hero-headline">
-    N.A.R.U. <span class="gradient-text">for OpenCode</span>
-  </h1>
-
-  <p class="hero-subheadline">
-    A role-based engineering orchestration layer that separates agent instructions from deterministic runtime guardrails and keeps important claims tied to evidence.
-  </p>
-
+  <div class="hero-badge"><span class="badge-pulse"></span><span>Evidence-grounded OpenCode orchestration</span></div>
+  <h1 class="hero-headline">N.A.R.U. <span class="gradient-text">for OpenCode</span></h1>
+  <p class="hero-subheadline">A role-based engineering orchestration layer that separates agent instructions from deterministic runtime guardrails and ties consequential claims to evidence.</p>
   <div class="hero-actions">
-    <a href="{{ site.baseurl }}/getting-started/quick-start" class="action-btn btn-primary-glow">
-      <i class="fa-solid fa-bolt"></i> Quick Start →
-    </a>
-    <a href="{{ site.baseurl }}/architecture/overview" class="action-btn btn-glass">
-      <i class="fa-solid fa-users-gear"></i> Agent Architecture
-    </a>
-    <a href="https://github.com/{{ site.repository }}" target="_blank" rel="noreferrer" class="action-btn btn-glass">
-      <i class="fa-brands fa-github"></i> GitHub Repository
-    </a>
+    <a href="{{ site.baseurl }}/getting-started/quick-start" class="action-btn btn-primary-glow"><i class="fa-solid fa-bolt"></i> Quick Start →</a>
+    <a href="{{ site.baseurl }}/architecture/overview" class="action-btn btn-glass"><i class="fa-solid fa-users-gear"></i> Agent Architecture</a>
+    <a href="https://github.com/{{ site.repository }}" target="_blank" rel="noreferrer" class="action-btn btn-glass"><i class="fa-brands fa-github"></i> GitHub Repository</a>
   </div>
 </div>
 
----
+## What N.A.R.U. Is
+
+N.A.R.U. coordinates specialized engineering agents around a stateful workflow. The model is intentionally split into two layers:
+
+1. **Instruction layer** — agent contracts under `agents/` guide reasoning and responsibilities.
+2. **Runtime layer** — the OpenCode plugin under `src/plugin/` enforces tool-level constraints that must not depend solely on model obedience.
+
+N.A.R.U. does not guarantee that generated software is secure, correct, or production-ready.
 
 ## Core Workflow
 
@@ -52,75 +43,48 @@ QA
 REPORT
 ```
 
-The native OpenCode `question` response is the source of Gate 1 authorization. Workspace files are never treated as proof of approval.
+A workflow state may be skipped only when it is genuinely inapplicable. Material deviations should be explicit.
+
+## Gate 1
+
+For software changes, application-code mutation is blocked until the native OpenCode `question` tool returns the explicit `APPROVE_GATE_1` choice for the current planning state.
+
+Workspace files are diagnostic artifacts, not authorization tokens.
 
 ## Evidence Model
 
-N.A.R.U. uses four explicit evidence classes:
-
 | Class | Meaning |
 |---|---|
-| `VERIFIED` | Supported by a tool result, artifact, command result, or runtime event |
+| `VERIFIED` | Supported by an actual tool result, artifact, command result, or runtime event |
 | `USER_DECISION` | Explicitly selected by the user |
 | `ASSUMPTION` | Low-risk assumption that is explicitly labeled |
 | `UNKNOWN/BLOCKED` | Not established by available evidence |
 
-This documentation follows the same rule: a planned capability is not described as an executed result.
+The same evidence model applies to this documentation. A planned feature is not documented as an executed result.
 
 ## Agent Team
 
-The repository currently contains a primary `naru` orchestrator plus 10 specialized agents:
-
-| Agent | Responsibility |
-|---|---|
-| `naru` | Orchestration, gates, delegation, and reporting |
-| `pm` | Requirements and acceptance criteria |
-| `researcher` | External evidence |
-| `dependency` | Dependency assessment |
-| `architect` | Architecture and ADRs |
-| `developer` | Implementation and tests |
-| `reviewer` | Independent review |
-| `qa` | Applicable verification |
-| `docs` | Documentation and knowledge consolidation |
-| `deploy` | Release operations |
-| `hotfix` | Scoped incident fixes |
+N.A.R.U. currently defines one primary orchestrator and ten specialized agents. See [Agent Architecture]({{ site.baseurl }}/architecture/overview) for boundaries and [Models & Reasoning]({{ site.baseurl }}/architecture/models-and-reasoning) for configuration details.
 
 ## Runtime Guardrails
 
-The plugin under `src/plugin/` is the deterministic enforcement layer. Its current guard surface includes mutation authorization, project-root validation, pre-Gate-1 shell restrictions, role permissions, security-pattern checks, circuit breaking, and Gate 1 runtime state.
+The current plugin guard surface includes mutation authorization, workspace path validation, pre-Gate-1 shell restrictions, role permissions, security-pattern checks, circuit breaking, and native-question-based Gate 1 runtime state.
 
-Agent Markdown remains an instruction layer. It is not a standalone security boundary.
+These are implementation facts about the repository; they are not a claim that arbitrary generated applications are secure.
 
-## Installation
+## Start Here
 
-The package currently declares Node.js `>=18.0.0` and Bun `>=1.0`.
-
-```bash
-bun install -g github:yoganataa/naru-agents
-naru setup --auto
-```
-
-or:
-
-```bash
-npm install -g github:yoganataa/naru-agents
-naru setup --auto
-```
-
-See the [Installation Guide]({{ site.baseurl }}/getting-started/installation) for verification commands.
-
-## Documentation
-
-- [N.A.R.U. Contract]({{ site.baseurl }}/NARU-CONTRACT)
 - [Quick Start]({{ site.baseurl }}/getting-started/quick-start)
 - [Installation]({{ site.baseurl }}/getting-started/installation)
+- [CLI Reference & Diagnostics]({{ site.baseurl }}/getting-started/troubleshooting)
 - [Agent Architecture]({{ site.baseurl }}/architecture/overview)
-- [Workflow & Quality Gates]({{ site.baseurl }}/workflow/pipelines)
+- [Models & Reasoning]({{ site.baseurl }}/architecture/models-and-reasoning)
+- [MCP Tooling]({{ site.baseurl }}/architecture/mcp-servers)
 - [Session Knowledge]({{ site.baseurl }}/architecture/session-knowledge)
+- [Workflow & Quality Gates]({{ site.baseurl }}/workflow/pipelines)
+- [Security & No-Bypass Policy]({{ site.baseurl }}/workflow/no-bypass-policy)
 - [Architecture Decisions]({{ site.baseurl }}/adr/ADR-001-v2-architecture-and-rag)
 
 ## Claim Discipline
 
-N.A.R.U. does not claim that an arbitrary generated application is secure, correct, or production-ready. A security checklist, benchmark, generated artifact, or planned test is not by itself evidence of runtime behavior.
-
-The documentation and agent contracts intentionally prefer an explicit `UNKNOWN/BLOCKED` result over an invented success claim.
+Do not report `secure`, `zero vulnerabilities`, `100% compliant`, or `production-ready` as absolute facts without a defined scope and actual evidence. When a property cannot be verified, report it as `UNKNOWN/BLOCKED` or `NOT_TESTED`.
