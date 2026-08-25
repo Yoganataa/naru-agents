@@ -5,9 +5,7 @@ title: Workflow & Quality Gates — N.A.R.U.
 
 # Workflow & Quality Gates
 
-N.A.R.U. uses an evidence-grounded workflow. The orchestrator may skip a state only when it is genuinely inapplicable and must explain material deviations.
-
-## Workflow
+N.A.R.U. uses an evidence-grounded workflow. It is a state machine, not a promise that every request must traverse every state.
 
 ```text
 DISCOVER
@@ -27,71 +25,115 @@ QA
 REPORT
 ```
 
-### Discover
+A state may be skipped only when it is genuinely inapplicable. Material deviations should be explicit.
 
-Classify the request as a question, change, bugfix, audit/setup task, or another applicable workflow. Inspect the existing repository before proposing modifications.
+## 1. Discover
 
-### Research
+Classify the request and inspect the relevant repository state before proposing changes.
 
-Research is required for current, version-sensitive, security-sensitive, vendor-specific, or otherwise consequential decisions. Prefer authoritative sources. Do not fabricate evidence.
+Typical intents include:
 
-### Plan
+- informational question;
+- feature/change;
+- bugfix/incident;
+- audit/setup/diagnostic.
 
-For software changes, the planning package normally includes:
+The orchestrator should use the smallest workflow that is sufficient for the task's risk and evidence requirements.
 
-- `.opencode/artifacts/prd.md`
-- `.opencode/artifacts/goal-baseline.md`
-- `.opencode/knowledge/architecture-blueprint.md`
-- relevant research and dependency evidence when required
+## 2. Research
 
-### User Approval — Gate 1
+Research is required when the decision depends materially on external or changing evidence, including current APIs, versions, security advisories, vendor behavior, or compatibility.
+
+Evidence priority:
+
+1. official documentation, source, and release notes;
+2. standards, advisories, registries, and peer-reviewed research;
+3. reputable maintained implementations when primary evidence is insufficient.
+
+Do not impose arbitrary citation counts. The objective is sufficient authoritative evidence for the decision.
+
+## 3. Plan
+
+For a normal software change, planning establishes:
+
+- scope and non-goals;
+- user stories and acceptance criteria;
+- implementation sequence;
+- architecture and dependency decisions;
+- material risks;
+- open decisions requiring user input.
+
+Typical artifacts are:
+
+```text
+.opencode/artifacts/prd.md
+.opencode/artifacts/goal-baseline.md
+.opencode/knowledge/architecture-blueprint.md
+```
+
+Research and dependency artifacts are added when applicable.
+
+## 4. User Approval — Gate 1
 
 Before application-code mutation:
 
-1. Present the plan and material evidence.
-2. Invoke the native OpenCode `question` tool.
-3. Request the exact approval option `APPROVE_GATE_1`.
-4. Delegate implementation only after runtime authorization is established.
+1. present the plan and material evidence;
+2. invoke the native OpenCode `question` tool;
+3. request `APPROVE_GATE_1`;
+4. allow implementation only after runtime authorization is established.
 
-Writing `APPROVED` into a workspace file does not grant authority. Changing the approved planning package invalidates its runtime approval fingerprint.
+The runtime plugin, not a workspace marker file, is the authority.
 
-### Implement
+If the planning state changes after approval, authorization must be re-established.
 
-`developer` or `hotfix` implements only against the approved scope and architecture. The orchestrator does not silently broaden scope.
+## 5. Implement
 
-### Review
+`developer` or `hotfix` implements only the approved scope and architecture. Changes that materially alter the approved plan require a new decision rather than silent scope expansion.
 
-`reviewer` independently checks correctness, goal alignment, architecture, security-relevant paths, dependency assumptions, and test authenticity against the actual diff.
+## 6. Review
 
-### QA
+`reviewer` independently evaluates the actual diff for:
 
-`qa` executes checks that are applicable to the project and reports their actual results. A check that cannot run is recorded as `BLOCKED` or `NOT_TESTED`; an irrelevant check is `NOT_APPLICABLE`.
+- goal alignment and scope drift;
+- architectural consistency;
+- correctness and maintainability;
+- security-relevant paths;
+- dependency/API assumptions;
+- authentic tests rather than hollow tests.
 
-### Report
+## 7. QA
 
-Final claims are classified as:
+`qa` runs checks applicable to the actual project and records their real outcomes.
 
-- `VERIFIED`
-- `USER_DECISION`
-- `ASSUMPTION`
-- `UNKNOWN/BLOCKED`
+```text
+PASS
+FAIL
+BLOCKED
+NOT_APPLICABLE
+NOT_TESTED
+```
+
+`NOT_TESTED` and `BLOCKED` are not converted into `PASS`.
+
+## 8. Report
+
+N.A.R.U. reports evidence using four classes:
+
+- `VERIFIED` — directly supported;
+- `USER_DECISION` — explicitly selected;
+- `ASSUMPTION` — explicitly labeled;
+- `UNKNOWN/BLOCKED` — unresolved or unavailable.
 
 ## Runtime Enforcement
 
-The OpenCode plugin is the deterministic enforcement boundary. Agent Markdown is an instruction layer, not a security boundary.
+The OpenCode plugin is the deterministic tool-boundary layer. Current guard categories include mutation authorization, project-root boundaries, pre-Gate-1 shell restrictions, role permissions, security-pattern checks, circuit breaking, and native-question-based Gate 1 state.
 
-The current plugin includes runtime checks for mutation authorization, project-root boundaries, pre-Gate-1 shell restrictions, role permissions, security-pattern checks, circuit breaking, and native-question-based Gate 1 state.
+## What Gates Do Not Mean
 
-## Quality Gate Semantics
+A gate does not prove every property of the software.
 
-N.A.R.U. should not be described as having a universal fixed set of four gates for every task. Gate behavior depends on the applicable workflow and evidence available.
-
-For software changes, the central hard boundary is **Gate 1: explicit user approval before application-code mutation**. Review and QA are subsequent verification stages, not proof that every possible security or correctness property has been established.
-
-## Evidence Rules
-
-- A checklist is not evidence that a property is satisfied.
-- A planned test is not evidence that it passed.
-- A model benchmark is not evidence of behavior in a particular run.
-- A generated artifact is not proof that the implementation matches it.
-- QA results apply only to checks actually executed.
+- Gate 1 proves authorization state, not code quality.
+- Review proves only what the reviewer actually inspected.
+- QA proves only what was actually executed and observed.
+- A security checklist does not prove the absence of vulnerabilities.
+- A benchmark does not prove behavior in an unrelated run.
