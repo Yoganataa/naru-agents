@@ -2,11 +2,13 @@
 
 **Next-gen Autonomous Role-based Unified Agents** for OpenCode.
 
-N.A.R.U. is an engineering orchestration layer that coordinates specialized agents through an evidence-grounded software workflow. Its design separates **LLM instructions** from **deterministic runtime enforcement** provided by the OpenCode plugin.
+N.A.R.U. is an engineering orchestration layer for coordinating specialized agents through an evidence-grounded software workflow. It separates **agent instructions** from **deterministic runtime enforcement** provided by the OpenCode plugin.
 
-> N.A.R.U. does not guarantee that generated software is secure, correct, or production-ready. Results depend on the project, available tools, configured models, and checks that actually run.
+> N.A.R.U. is not a guarantee that generated software is secure, correct, or production-ready. Results depend on the project, models, tools, configuration, and verification that actually runs.
 
-## Workflow
+## What N.A.R.U. Does
+
+N.A.R.U. organizes engineering work into explicit responsibilities:
 
 ```text
 DISCOVER
@@ -26,42 +28,42 @@ QA
 REPORT
 ```
 
-For software changes, application-code mutation is intended to begin only after **Gate 1** receives explicit user approval through the native OpenCode `question` tool. The runtime plugin enforces this boundary at the tool level.
+For software changes, **Gate 1** is the hard boundary before application-code mutation. Authorization comes from the native OpenCode `question` response, not from a file containing `APPROVED`.
 
 ## Evidence Model
 
-N.A.R.U. distinguishes four evidence states:
+Every important claim is classified as one of:
 
-- **VERIFIED** — supported by an actual tool result, artifact, command result, or runtime event.
-- **USER_DECISION** — explicitly selected by the user.
-- **ASSUMPTION** — low-risk assumption that is explicitly labeled.
-- **UNKNOWN/BLOCKED** — not established by available evidence.
+| Class | Meaning |
+|---|---|
+| `VERIFIED` | Supported by an actual tool result, artifact, command result, or runtime event |
+| `USER_DECISION` | Explicitly selected by the user |
+| `ASSUMPTION` | Low-risk assumption that is explicitly labeled |
+| `UNKNOWN/BLOCKED` | Not established by available evidence |
 
-Prompts, generated artifacts, and model memory are not treated as proof of execution.
+Plans, prompts, model memory, and generated status files are not execution evidence.
 
 ## Agent Team
 
-The repository contains a primary `naru` orchestrator and specialized agents for requirements, research, dependency analysis, architecture, implementation, review, QA, documentation, deployment, and hotfix work.
-
 | Agent | Responsibility |
 |---|---|
-| `naru` | Workflow orchestration, gates, delegation, and evidence-based reporting |
-| `pm` | Requirements, scope, user stories, and acceptance criteria |
-| `researcher` | External technical and security evidence |
+| `naru` | Orchestration, workflow state, gates, delegation, and reporting |
+| `pm` | Requirements, scope, user stories, acceptance criteria, and goal baseline |
+| `researcher` | External technical, compatibility, and security evidence |
 | `dependency` | Dependency compatibility, provenance, and version assessment |
-| `architect` | Architecture, ADRs, contracts, and implementation planning |
+| `architect` | Architecture, contracts, ADRs, and implementation planning |
 | `developer` | Implementation and tests after approval |
 | `reviewer` | Independent correctness, security, drift, and test-quality review |
-| `qa` | Build, test, runtime, and other applicable verification |
+| `qa` | Applicable build, type-check, test, and runtime verification |
 | `docs` | Evidence-based documentation and knowledge consolidation |
 | `deploy` | Release and deployment operations |
 | `hotfix` | Narrowly scoped incident and regression fixes |
 
-Agent model assignments and permissions are defined in `agents/` and should be treated as the source of truth.
+Exact model assignments, permissions, and step limits live in `agents/` and are the source of truth.
 
 ## Runtime Guardrails
 
-The OpenCode plugin provides deterministic enforcement for the workflow. The current implementation includes checks for:
+The plugin under `src/plugin/` provides deterministic tool-boundary enforcement. The current implementation includes checks for:
 
 - application mutation authorization;
 - project-root path boundaries;
@@ -71,11 +73,11 @@ The OpenCode plugin provides deterministic enforcement for the workflow. The cur
 - repeated-action circuit breaking;
 - native-question-based Gate 1 runtime state.
 
-Agent Markdown files are instructions, not a security boundary.
+Agent Markdown is an instruction layer. It is not, by itself, a security boundary.
 
 ## Installation
 
-The package currently declares Node.js `>=18.0.0` and Bun `>=1.0` in `package.json`.
+The current package declares Node.js `>=18.0.0` and Bun `>=1.0`.
 
 ### Bun
 
@@ -97,16 +99,15 @@ naru setup --auto
 git clone https://github.com/Yoganataa/naru-agents.git
 cd naru-agents
 bun install
-bun test src/plugin/guardrail.test.ts
 ```
 
-Available package scripts are defined in `package.json`, including `test`, `test:plugin`, `bench:prompts`, `docs:preview`, `build:plugin`, `build:bin`, and `build:all`.
+Run the verification commands that are relevant to your change. Do not treat the existence of a script as proof that it passed.
 
 ## CLI
 
-The package exposes the `naru` and `naru-agents` binaries. Verify the installed command set with `naru --help`; documentation should not be treated as an exhaustive command contract unless it matches the current CLI source.
+The repository exposes the `naru` and `naru-agents` binaries. The authoritative command surface is the current CLI source; use `naru --help` on the installed version.
 
-Documented commands include:
+Common commands currently documented by the repository include:
 
 ```bash
 naru setup --auto
@@ -116,40 +117,38 @@ naru init
 naru validate
 ```
 
-## Documentation
+## Documentation Site
 
-The documentation site is under [`docs/`](docs/).
+The complete documentation lives under [`docs/`](docs/) and is intended to be published through GitHub Pages.
 
-- [N.A.R.U. Contract](docs/NARU-CONTRACT.md) — concise behavioral and evidence contract.
-- [Quick Start](docs/getting-started/quick-start.md) — user workflow.
-- [Installation](docs/getting-started/installation.md) — installation and verification.
-- [Architecture](docs/architecture/overview.md) — agent responsibilities and system structure.
-- [Pipelines](docs/workflow/pipelines.md) — workflow states and gate semantics.
-- [Session Knowledge](docs/architecture/session-knowledge.md) — session and knowledge model.
-- [Architecture Decisions](docs/adr/) — recorded architectural decisions.
+- [Overview](docs/index.md)
+- [Quick Start](docs/getting-started/quick-start.md)
+- [Installation](docs/getting-started/installation.md)
+- [CLI Reference & Diagnostics](docs/getting-started/troubleshooting.md)
+- [Agent Architecture](docs/architecture/overview.md)
+- [Models & Reasoning](docs/architecture/models-and-reasoning.md)
+- [MCP Tooling](docs/architecture/mcp-servers.md)
+- [Session Knowledge](docs/architecture/session-knowledge.md)
+- [Workflow & Quality Gates](docs/workflow/pipelines.md)
+- [Security & No-Bypass Policy](docs/workflow/no-bypass-policy.md)
+- [Architecture Decisions](docs/adr/)
 
-Preview the documentation locally with:
+## Claim Discipline
 
-```bash
-npm run docs:preview
-```
-
-## Limitations and Claim Discipline
-
-N.A.R.U. intentionally avoids treating broad policy statements as universal guarantees.
+N.A.R.U. deliberately avoids presenting policy as proof.
 
 - A security checklist does not prove an application is secure.
 - A planned test is not evidence that the test passed.
-- A model name or benchmark score is not evidence of behavior in a specific run.
-- An artifact saying `APPROVED` does not grant Gate 1 authority; runtime state does.
-- A generated architecture document does not prove that implementation matches it.
-- A QA result applies only to checks that were actually executed.
+- A benchmark score is not evidence of behavior in a particular run.
+- A generated artifact does not prove implementation matches the artifact.
+- A workspace approval marker does not authorize Gate 1.
+- QA results apply only to checks that were actually executed.
 
-These constraints are part of the system design.
+When evidence is unavailable, N.A.R.U. should report `UNKNOWN/BLOCKED`, `NOT_TESTED`, or `NOT_APPLICABLE` as appropriate.
 
 ## Contributing
 
-When changing workflow behavior, update the relevant agent contract, runtime enforcement, and documentation together. Prefer verified implementation or tool results over assumptions. If a capability cannot be demonstrated from the repository, document it as unknown rather than presenting it as fact.
+When changing N.A.R.U. behavior, update the relevant agent contract, runtime enforcement, and documentation together. Prefer repository evidence and actual tool results over assumptions.
 
 ## License
 
